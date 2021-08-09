@@ -13,12 +13,10 @@ const createDestinationOptions = (destination) => (
 const showEditModule = (event = {}) => {
   const {type, start, end, price, offer, destination } = event;
 
-  const startHour = start !== 0
-    ? humanizeEventHoursDate(start)
-    : '';
-  const endHour = end !== 0
-    ? humanizeEventHoursDate(end)
-    : '';
+  const startHour = humanizeEventHoursDate(start);
+
+  const endHour = humanizeEventHoursDate(end);
+
 
   return `<form class="event event--edit" action="#" method="post">
 <header class="event__header">

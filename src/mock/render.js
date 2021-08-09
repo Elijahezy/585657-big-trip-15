@@ -44,28 +44,34 @@ render(containerEvents, 'beforeend', createEventList());
 
 const containerEventList = document.querySelector('.trip-events__list');
 
-for (let i = 0; i < DEFAULT_EVENTS; i++) {
-  render(containerEventList, 'beforeend', createEvent(events[i]));
-}
+events.forEach((it, i) => {render(containerEventList, 'beforeend', createEvent(events[i]));});
 
 const eventShowEditBtn = document.querySelectorAll('.event__rollup-btn');
 const eventItems = document.querySelectorAll('.trip-events__item');
 
-eventShowEditBtn.forEach((item, i) => {
-  const currentItem = item;
+const editEvents = (item, i) => {
   const onRollUpBtnClose = () => {
+    const currentEventItem = eventItems[i].querySelector('.event');
     const closeBtn = document.querySelector('.event--edit .event__rollup-btn');
-    closeBtn.addEventListener('click', () => { document.querySelector('.event--edit').remove();
-      eventItems[i].querySelector('.event').insertAdjacentElement('beforeend', currentItem);
+    const eventEditModule = document.querySelector('.event--edit');
+    closeBtn.addEventListener('click', () => {
+      eventEditModule.remove();
+      currentEventItem.insertAdjacentElement('beforeend', item);
     });
 
   };
   const onRollUpBtnOpen = () => {
-    render(eventItems[i], 'afterend', showEditModule(events[i]));
-    item.remove();
-    onRollUpBtnClose();
+    if(eventItems[i].nextSibling !== document.querySelector('.event--edit')) {
+      render(eventItems[i], 'afterend', showEditModule(events[i]));
+      onRollUpBtnClose();
+    }
   };
   item.addEventListener('click', onRollUpBtnOpen);
+};
+
+eventShowEditBtn.forEach((item, i) => {
+  editEvents(item, i);
 });
+
 
 export { events };

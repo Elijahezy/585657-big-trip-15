@@ -37,9 +37,8 @@ const createEvent = (event) => {
   const diffHour = () => {
     if (dayjs(end).diff(start, 'hour') !== 0) {
       return `${dayjs(end).diff(start, 'hour')  }H`;
-    } else if (dayjs(end).diff(start, 'minute') !== 0) {
-      return `${dayjs(end).diff(start, 'minute')  }M`;
-    } return '';
+    }
+    return `${dayjs(end).diff(start, 'minute')  }M`;
   };
 
   return `<li class="trip-events__item">

@@ -1,11 +1,7 @@
 const calculateCostInfo = (elements) => {
-  const values = [];
-  elements.forEach((item) => {
-    values.push(item.price);
-  },
-  );
-  const value = values.reduce((a,b) => a + b);
-  return value;
+  const values = elements.map((item) => item.price);
+  const result = values.reduce((a, b) =>a + b);
+  return result;
 };
 
 const showCostInfo = (elements) => (
