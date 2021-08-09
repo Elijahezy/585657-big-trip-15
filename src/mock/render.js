@@ -3,12 +3,25 @@ import { showCostInfo } from '../view/cost-info.js';
 import { showMenu } from '../view/menu.js';
 import { showFilters } from '../view/filters.js';
 import { showSortingMethods } from '../view/sort.js';
+import { showEditModule } from '../view/event-edit';
 import { createEventList, createEvent  } from '../view/event.js';
-import { generateDestination } from './data.js';
+import { generateRoutePoints } from './data.js';
+import dayjs from 'dayjs';
 
 const DEFAULT_EVENTS = 18;
 
-const events = new Array(DEFAULT_EVENTS).fill().map(generateDestination);
+const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
+
+events.sort((a, b) => {
+  if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
+    return 1;
+  }
+  if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
+    return -1;
+  }
+  return 0;
+});
+
 
 const containerRouteAndCost = document.querySelector('.trip-main');
 const containerMenu = document.querySelector('.trip-controls__navigation');
@@ -19,11 +32,11 @@ const render = (container, place, template) => {
   container.insertAdjacentHTML(place, template);
 };
 
-render(containerRouteAndCost, 'afterbegin', showRouteInfo());
+render(containerRouteAndCost, 'afterbegin', showRouteInfo(events));
 
 const containerTripInfo = document.querySelector('.trip-info__main');
 
-render(containerTripInfo, 'afterend', showCostInfo());
+render(containerTripInfo, 'afterend', showCostInfo(events));
 render(containerMenu, 'beforeend', showMenu());
 render(containerFilters, 'beforeend', showFilters());
 render(containerEvents, 'beforeend', showSortingMethods());
@@ -35,4 +48,24 @@ for (let i = 0; i < DEFAULT_EVENTS; i++) {
   render(containerEventList, 'beforeend', createEvent(events[i]));
 }
 
-export { render, events };
+const eventShowEditBtn = document.querySelectorAll('.event__rollup-btn');
+const eventItems = document.querySelectorAll('.trip-events__item');
+
+eventShowEditBtn.forEach((item, i) => {
+  const currentItem = item;
+  const onRollUpBtnClose = () => {
+    const closeBtn = document.querySelector('.event--edit .event__rollup-btn');
+    closeBtn.addEventListener('click', () => { document.querySelector('.event--edit').remove();
+      eventItems[i].querySelector('.event').insertAdjacentElement('beforeend', currentItem);
+    });
+
+  };
+  const onRollUpBtnOpen = () => {
+    render(eventItems[i], 'afterend', showEditModule(events[i]));
+    item.remove();
+    onRollUpBtnClose();
+  };
+  item.addEventListener('click', onRollUpBtnOpen);
+});
+
+export { events };

@@ -1,10 +1,9 @@
 import { getRandomArrayElement, getRandomInteger, getRandomIntegerEqualTen } from './utils';
-import { POINTS, CITIES } from '../consts';
+import { POINTS, OFFER_LIST } from '../consts';
 import dayjs from 'dayjs';
 
-const MAX_DESCRIPTIONS = 5;
 const MAX_PHOTOS = 3;
-const MAX_HOURS_GAP = 22;
+const MAX_HOURS_GAP = 5;
 const MAX_DAYS_GAP = 7;
 
 const DESCRIPTIONS = [ 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -20,8 +19,9 @@ const DESCRIPTIONS = [ 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.
   'In rutrum ac purus sit amet tempus.' ];
 
 const generateHours = () => {
-  const hoursGap = getRandomInteger(2, MAX_HOURS_GAP);
-  return dayjs().add(hoursGap, 'hour').toDate();
+  const hoursGap = getRandomInteger(-2, MAX_HOURS_GAP);
+  const mitesGap = getRandomInteger(-60, 60);
+  return dayjs().add(hoursGap, 'hour').add(mitesGap, 'minute').toDate();
 };
 
 const generateDays = () => {
@@ -29,88 +29,54 @@ const generateDays = () => {
   return dayjs().add(daysGap, 'day').toDate();
 };
 
-const generateRandomDescriptions = (elements) => {
-  const descriptionsCurrent = [];
-  const descriptionsLength = getRandomInteger(1, MAX_DESCRIPTIONS);
-  for (let i = 0; i < descriptionsLength; i++) {
-    const singleDescription = getRandomArrayElement(elements);
-    descriptionsCurrent.push(singleDescription);
-  }
-  return descriptionsCurrent;
-};
-
-const getRandomPhotos = () => {
+const getRandomPhoto = () => {
   const photosCurrent = [];
   const randomInteger = getRandomInteger(1, MAX_PHOTOS);
   for (let i = 0; i < randomInteger; i++) {
     const randomNumber = getRandomInteger(1, 10);
     photosCurrent.push(`http://picsum.photos/248/152?r=${randomNumber}`);
   }
-  return photosCurrent;
+  return photosCurrent[getRandomInteger(0,2)];
 };
 
-const generateEventCity = () => (
-  `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${getRandomArrayElement(CITIES)}" list="destination-list-1">
-  <datalist id="destination-list-1">
-    <option value="${CITIES[0]}"></option>
-    <option value="${CITIES[1]}"></option>
-    <option value="${CITIES[2]}"></option>
-  </datalist>`
+const getOffer = (offerName) => {
+  const values = Object.values(OFFER_LIST);
+  const result = values.find((item) => item.type === offerName);
+  return result;
+};
+
+const destination = (
+  {
+    description: getRandomArrayElement(DESCRIPTIONS),
+    name: 'Berlin',
+    pictures: [
+      {
+        src: getRandomPhoto(),
+        description: getRandomArrayElement(DESCRIPTIONS),
+      },
+    ],
+  }
 );
 
-const flightOffers = {
-  type: 'Flight',
-  offers: [
-    {
-      title: 'Choose meal',
-      price: '180',
-      name: 'meal',
-    },
-    {
-      title: 'Switch to comfort class',
-      price: '100',
-      name: 'comfort',
-    },
-    {
-      title: 'Add luggage',
-      price: '30',
-      name: 'luggage',
-    },
-    {
-      title: 'Choose seats',
-      price: '25',
-      name: 'seats',
-    },
-    {
-      title: 'Take pet on board',
-      price: '50',
-      name: 'pet',
-    },
-  ],
-};
-
-const generateDestination = () => {
+const generateRoutePoints = () => {
   const type = getRandomArrayElement(POINTS);
-  const startTime = generateHours();
-  let endTime = generateHours();
-  while (startTime > endTime) {
-    endTime = generateHours();
+  const start = generateHours();
+  let end = generateHours();
+  while (start > end) {
+    end = generateHours();
   }
 
   return {
     type,
-    destination: generateEventCity(),
-    description: generateRandomDescriptions(DESCRIPTIONS),
-    pictures: getRandomPhotos(),
-    offer: flightOffers,
+    destination,
+    offer: getOffer(type),
     price: getRandomIntegerEqualTen(20, 400, 10),
-    start: dayjs(startTime).format('HH:mm'),
-    end: dayjs(endTime).format('HH:mm'),
-    diffTime: dayjs(endTime).diff(startTime, 'hour'),
-    day: dayjs(generateDays()).format('DD MMM'),
+    start,
+    end,
+    day: generateDays(),
     isFavorite: Boolean(getRandomInteger(0,1)),
   };
 };
 
-export { generateDestination };
+export { generateRoutePoints };
 

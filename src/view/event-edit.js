@@ -1,14 +1,24 @@
-import { generateEventTypeList, generateOfferList } from '../mock/event-edit-data';
+import { humanizeEventHoursDate } from '../mock/utils';
+import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
+
+const createDestinationOptions = (destination) => (
+  `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+  <datalist id="destination-list-1">
+    <option value="Amsterdam"></option>
+    <option value="Geneva"></option>
+    <option value="Chamonix"></option>
+  </datalist>`
+);
 
 const showEditModule = (event = {}) => {
-  const {
-    type ='Flight',
-    start = 'Choose',
-    end = 'Choose',
-    price = '',
-    offer = '',
-    destination = 'Moscow',
-  } = event;
+  const {type, start, end, price, offer, destination } = event;
+
+  const startHour = start !== 0
+    ? humanizeEventHoursDate(start)
+    : '';
+  const endHour = end !== 0
+    ? humanizeEventHoursDate(end)
+    : '';
 
   return `<form class="event event--edit" action="#" method="post">
 <header class="event__header">
@@ -22,7 +32,7 @@ const showEditModule = (event = {}) => {
     <div class="event__type-list">
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
-        ${generateEventTypeList().join('')}
+        ${createEventTypeList().join('')}
       </fieldset>
     </div>
   </div>
@@ -31,15 +41,15 @@ const showEditModule = (event = {}) => {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
-    ${destination}
+    ${createDestinationOptions(destination)}
   </div>
 
   <div class="event__field-group  event__field-group--time">
     <label class="visually-hidden" for="event-start-time-1">From</label>
-    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${start}">
+    <input class="event__input  event__input--time" id="event-start-time-1" type="text" name="event-start-time" value="${startHour}">
     &mdash;
     <label class="visually-hidden" for="event-end-time-1">To</label>
-    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${end}">
+    <input class="event__input  event__input--time" id="event-end-time-1" type="text" name="event-end-time" value="${endHour}">
   </div>
 
   <div class="event__field-group  event__field-group--price">
@@ -61,13 +71,13 @@ const showEditModule = (event = {}) => {
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${generateOfferList(offer)}
+      ${createOfferList(offer).join('')}
     </div>
   </section>
 
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${destination}</p>
+    <p class="event__destination-description">${destination.description}</p>
   </section>
 </section>
 </form>`;
