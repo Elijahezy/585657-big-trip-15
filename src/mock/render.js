@@ -1,12 +1,15 @@
-import { showRouteInfo } from '../view/route-info.js';
-import { showCostInfo } from '../view/cost-info.js';
-import { showMenu } from '../view/menu.js';
-import { showFilters } from '../view/filters.js';
-import { showSortingMethods } from '../view/sort.js';
-import { showEditModule } from '../view/event-edit';
-import { createEventList, createEvent  } from '../view/event.js';
+import RouteInfoView from '../view/route-info.js';
+import FiltersView from '../view/filters.js';
+import SiteMenuView from '../view/menu.js';
+import CostInfoView from '../view/cost-info.js';
+import SortView from '../view/sort.js';
+import EventListView from '../view/event-list.js';
+import EventView from '../view/event.js';
+import EditModuleView from '../view/event-edit.js';
 import { generateRoutePoints } from './data.js';
 import dayjs from 'dayjs';
+
+import { render, RenderPosition } from './utils.js';
 
 const DEFAULT_EVENTS = 18;
 
@@ -24,54 +27,37 @@ events.sort((a, b) => {
 
 
 const containerRouteAndCost = document.querySelector('.trip-main');
-const containerMenu = document.querySelector('.trip-controls__navigation');
-const containerFilters = document.querySelector('.trip-controls__filters');
+const containerTripNav = document.querySelector('.trip-controls__navigation');
 const containerEvents = document.querySelector('.trip-events');
 
-const render = (container, place, template) => {
-  container.insertAdjacentHTML(place, template);
-};
 
-render(containerRouteAndCost, 'afterbegin', showRouteInfo(events));
+render(containerRouteAndCost, new RouteInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
 
-const containerTripInfo = document.querySelector('.trip-info__main');
+const routeAndCostContainer = document.querySelector('.trip-main__trip-info');
 
-render(containerTripInfo, 'afterend', showCostInfo(events));
-render(containerMenu, 'beforeend', showMenu());
-render(containerFilters, 'beforeend', showFilters());
-render(containerEvents, 'beforeend', showSortingMethods());
-render(containerEvents, 'beforeend', createEventList());
+render(routeAndCostContainer, new CostInfoView(events).getElement(), RenderPosition.BEFOREEND);
 
-const containerEventList = document.querySelector('.trip-events__list');
+render(containerTripNav, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
+render(containerTripNav, new FiltersView().getElement(), RenderPosition.BEFOREEND);
 
-events.forEach((it, i) => {render(containerEventList, 'beforeend', createEvent(events[i]));});
+render(containerEvents, new SortView().getElement(), RenderPosition.BEFOREEND);
+render(containerEvents, new EventListView().getElement(), RenderPosition.BEFOREEND);
 
-const eventShowEditBtn = document.querySelectorAll('.event__rollup-btn');
-const eventItems = document.querySelectorAll('.trip-events__item');
+const eventListContainer = document.querySelector('.trip-events__list');
 
-const editEvents = (item, i) => {
-  const onRollUpBtnClose = () => {
-    const currentEventItem = eventItems[i].querySelector('.event');
-    const closeBtn = document.querySelector('.event--edit .event__rollup-btn');
-    const eventEditModule = document.querySelector('.event--edit');
-    closeBtn.addEventListener('click', () => {
-      eventEditModule.remove();
-      currentEventItem.insertAdjacentElement('beforeend', item);
-    });
+events.forEach((it, i) => {
+  const eventComponent = new EventView(events[i]);
+  const eventEditComponent = new EditModuleView(events[i]);
 
+  render(eventListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND );
+
+  const replaceCardToForm = (taskListElement) => {
+    taskListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
   };
-  const onRollUpBtnOpen = () => {
-    if(eventItems[i].nextSibling !== document.querySelector('.event--edit')) {
-      render(eventItems[i], 'afterend', showEditModule(events[i]));
-      onRollUpBtnClose();
-    }
-  };
-  item.addEventListener('click', onRollUpBtnOpen);
-};
 
-eventShowEditBtn.forEach((item, i) => {
-  editEvents(item, i);
+  eventComponent.getElement().querySelectorAll('.event__rollup-btn').forEach((item) => {})
 });
+
 
 
 export { events };

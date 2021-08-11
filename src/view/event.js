@@ -1,10 +1,5 @@
 import dayjs from 'dayjs';
-import { humanizeEventHoursDate, humanizeEventDueDate } from '../mock/utils';
-
-const createEventList = () =>
-  (
-    '<ul class="trip-events__list"></ul>'
-  );
+import { humanizeEventHoursDate, humanizeEventDueDate, createElement } from '../mock/utils';
 
 const createOfferTemplate = (offerTitle, offerPrice) => (
   `<li class="event__offer">
@@ -23,7 +18,7 @@ const createOfferTemplateList = (elements) => {
   return result;
 };
 
-const createEvent = (event) => {
+const createEventTemplate = (event) => {
   const {type, start, end, price, offer, isFavorite, day, destination } = event;
   const startHour = start !== 0
     ? humanizeEventHoursDate(start)
@@ -77,5 +72,27 @@ const createEvent = (event) => {
 `;
 };
 
-export { createEventList, createEvent };
+export default class Event {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEventTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
 

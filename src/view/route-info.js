@@ -1,3 +1,5 @@
+import { createElement } from '../mock/utils';
+
 const getRouteDestinationList = (elements) => {
   const result = elements.map((item) => item.destination.name);
   const filteredResult = result.filter((item, index) => result.indexOf(item) === index);
@@ -5,7 +7,8 @@ const getRouteDestinationList = (elements) => {
 };
 
 
-const showRouteInfo = (events) => `<section class="trip-main__trip-info  trip-info">
+const createRouteInfoTemplate = (events) =>
+  `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">
         <h1 class="trip-info__title">${getRouteDestinationList(events)}</h1>
 
@@ -14,5 +17,26 @@ const showRouteInfo = (events) => `<section class="trip-main__trip-info  trip-in
 
     </section>`;
 
-export { showRouteInfo };
+export default class RouteInfo {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createRouteInfoTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
 

@@ -1,4 +1,6 @@
-const showFilters = () => (`<form class="trip-filters" action="#" method="get">
+import { createElement } from '../mock/utils';
+
+const createFiltersTemplate = () => (`<form class="trip-filters" action="#" method="get">
 <div class="trip-filters__filter">
   <input id="filter-everything" class="trip-filters__filter-input  visually-hidden" type="radio" name="trip-filter" value="everything" checked>
   <label class="trip-filters__filter-label" for="filter-everything">Everything</label>
@@ -17,4 +19,24 @@ const showFilters = () => (`<form class="trip-filters" action="#" method="get">
 <button class="visually-hidden" type="submit">Accept filter</button>
 </form>`);
 
-export { showFilters };
+export default class Filters {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate(events) {
+    return createFiltersTemplate(events);
+  }
+
+  getElement(events) {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate(events));
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

@@ -1,4 +1,4 @@
-import { humanizeEventHoursDate } from '../mock/utils';
+import { humanizeEventHoursDate, createElement } from '../mock/utils';
 import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
 
 const createDestinationOptions = (destination) => (
@@ -10,7 +10,7 @@ const createDestinationOptions = (destination) => (
   </datalist>`
 );
 
-const showEditModule = (event = {}) => {
+const createEditModuleTemplate = (event = {}) => {
   const {type, start, end, price, offer, destination } = event;
 
   const startHour = humanizeEventHoursDate(start);
@@ -81,4 +81,27 @@ const showEditModule = (event = {}) => {
 </form>`;
 };
 
-export { showEditModule };
+
+export default class EditModule {
+  constructor(event) {
+    this._event = event;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createEditModuleTemplate(this._event);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
