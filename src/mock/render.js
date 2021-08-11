@@ -14,14 +14,13 @@ const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
 
 events.sort((a, b) => {
   if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
-    return 1;
+    return a.day - b.day;
   }
   if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
-    return -1;
+    return a.day - b.day;
   }
   return 0;
 });
-
 
 const containerRouteAndCost = document.querySelector('.trip-main');
 const containerMenu = document.querySelector('.trip-controls__navigation');
@@ -44,34 +43,31 @@ render(containerEvents, 'beforeend', createEventList());
 
 const containerEventList = document.querySelector('.trip-events__list');
 
-events.forEach((it, i) => {render(containerEventList, 'beforeend', createEvent(events[i]));});
+events.forEach((event) => {render(containerEventList, 'beforeend', createEvent(event));});
 
-const eventShowEditBtn = document.querySelectorAll('.event__rollup-btn');
+const eventEditButtons = document.querySelectorAll('.event__rollup-btn');
 const eventItems = document.querySelectorAll('.trip-events__item');
 
-const editEvents = (item, i) => {
-  const onRollUpBtnClose = () => {
+const editEvent = (item, i) => {
+  const onRollUpButtonClose = () => {
     const currentEventItem = eventItems[i].querySelector('.event');
-    const closeBtn = document.querySelector('.event--edit .event__rollup-btn');
+    const closeButton = document.querySelector('.event--edit .event__rollup-btn');
     const eventEditModule = document.querySelector('.event--edit');
-    closeBtn.addEventListener('click', () => {
+    closeButton.addEventListener('click', () => {
       eventEditModule.remove();
       currentEventItem.insertAdjacentElement('beforeend', item);
     });
 
   };
-  const onRollUpBtnOpen = () => {
+  const onRollUpButtonOpen = () => {
     if(eventItems[i].nextSibling !== document.querySelector('.event--edit')) {
       render(eventItems[i], 'afterend', showEditModule(events[i]));
-      onRollUpBtnClose();
+      onRollUpButtonClose();
     }
   };
-  item.addEventListener('click', onRollUpBtnOpen);
+  item.addEventListener('click', onRollUpButtonOpen);
 };
 
-eventShowEditBtn.forEach((item, i) => {
-  editEvents(item, i);
-});
-
+eventEditButtons.forEach(editEvent);
 
 export { events };

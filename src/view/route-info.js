@@ -1,9 +1,8 @@
-const getRouteDestinationList = (elements) => {
-  const result = elements.map((item) => item.destination.name);
-  const filteredResult = result.filter((item, index) => result.indexOf(item) === index);
-  return filteredResult;
+const getRouteDestinationList = (events) => {
+  const routeNames = events.map((event) => event.destination.name);
+  const filteredRouteNames = routeNames.filter((name, index) => routeNames.indexOf(name) === index);
+  return filteredRouteNames;
 };
-
 
 const showRouteInfo = (events) => `<section class="trip-main__trip-info  trip-info">
       <div class="trip-info__main">

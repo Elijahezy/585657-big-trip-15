@@ -8,34 +8,26 @@ const createEventList = () =>
 
 const createOfferTemplate = (offerTitle, offerPrice) => (
   `<li class="event__offer">
-    <span class="event__offer-title">${offerTitle.title}</span>
+    <span class="event__offer-title">${offerTitle}</span>
     &plus;&euro;&nbsp;
-    <span class="event__offer-price">${offerPrice.price}</span>
+    <span class="event__offer-price">${offerPrice}</span>
   </li>`
 );
 
-const createOfferTemplateList = (elements) => {
-  const result = [];
-  for (let i = 0; i < elements.offers.length; i++) {
-    const element = createOfferTemplate(elements.offers[i], elements.offers[i]);
-    result.push(element);
-  }
-  return result;
-};
+const createOfferTemplateList = (eventOffers) => eventOffers.offers.map((offer) => createOfferTemplate(offer.title, offer.price));
 
-const createEvent = (event) => {
+
+const createEvent = (event = {}) => {
   const {type, start, end, price, offer, isFavorite, day, destination } = event;
-  const startHour = start !== 0
-    ? humanizeEventHoursDate(start)
-    : '';
-  const endHour = end !== 0
-    ? humanizeEventHoursDate(end)
-    : '';
-  const dueDate = day !== 0
-    ? humanizeEventDueDate(day)
-    : '';
+
+  const startHour = humanizeEventHoursDate(start);
+
+  const endHour = humanizeEventHoursDate(end);
+
+  const dueDate = humanizeEventDueDate(day);
+
   const diffHour = () => {
-    if (dayjs(end).diff(start, 'hour') !== 0) {
+    if (dayjs(end).diff(start, 'hour')) {
       return `${dayjs(end).diff(start, 'hour')  }H`;
     }
     return `${dayjs(end).diff(start, 'minute')  }M`;

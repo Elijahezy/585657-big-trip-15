@@ -50,15 +50,15 @@ const generateDays = () => {
 
 const getRandomPhoto = () => {
   const getPhoto = () => `http://picsum.photos/248/152?r=${getRandomInteger(1, MAX_PHOTOS)}`;
-  const result = new Array(getRandomInteger(1, MAX_PHOTOS)).fill().map(getPhoto);
-  const filteredResult = result.filter((item, index) => result.indexOf(item) === index);
-  return filteredResult;
+  const photos = new Array(getRandomInteger(1, MAX_PHOTOS)).fill().map(getPhoto);
+  const filteredPhotos = photos.filter((photo, index) => photos.indexOf(photo) === index);
+  return filteredPhotos;
 };
 
 const getOffer = (offerName) => {
-  const values = Object.values(OFFER_LIST);
-  const result = values.find((item) => item.type === offerName);
-  return result;
+  const offerTypes = Object.values(OFFER_LIST);
+  const requiredOffer = offerTypes.find((offer) => offer.type === offerName);
+  return requiredOffer;
 };
 
 const destination = (
@@ -76,13 +76,7 @@ const destination = (
 
 const generateRoutePoints = () => {
   const type = getRandomArrayElement(POINTS);
-  let start = generateHours();
-  let end = generateHours();
-  if (start > end) {
-    const swap = start;
-    start = end;
-    end = swap;
-  }
+  const [start, end] = [generateHours(), generateHours()].sort((a, b) => a - b);
   return {
     type,
     destination,
