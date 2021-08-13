@@ -1,11 +1,8 @@
-
 import { createElement } from '../mock/utils';
+const calculateCostInfo = (events) =>
+  events.map((event) => event.price)
+    .reduce((a, b) => a + b);
 
-const calculateCostInfo = (elements) => {
-  const values = elements.map((item) => item.price);
-  const result = values.reduce((a, b) =>a + b);
-  return result;
-};
 
 const createCostInfoTemplate = (elements) => (
   `<p class="trip-info__cost">

@@ -7,13 +7,7 @@ const createEventType = (eventType) => (
   </div>`
 );
 
-const createEventTypeList = () => {
-  const eventList = [];
-  for (let i = 0; i < POINTS.length; i++) {
-    eventList.push(createEventType(POINTS[i]));
-  }
-  return eventList;
-};
+const createEventTypeList = () => POINTS.map((point) => createEventType(point));
 
 const createEventOffer = (offerTitle, offerPrice, offerName) => (
   `<div class="event__offer-selector">
@@ -26,12 +20,6 @@ const createEventOffer = (offerTitle, offerPrice, offerName) => (
 </div>`
 );
 
-const createOfferList = (node) => {
-  const offerList = [];
-  for (let i = 0; i < node.offers.length; i++) {
-    offerList.push(createEventOffer(node.offers[i].title, node.offers[i].price, node.offers[i].name));
-  }
-  return offerList;
-};
+const createOfferList = (offerType) => offerType.offers.map((offer) => createEventOffer(offer.title, offer.price));
 
 export { createEventTypeList, createOfferList };

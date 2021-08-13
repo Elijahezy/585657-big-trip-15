@@ -63,14 +63,13 @@ const renderEvent = (renderListElement, event) => {
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  eventEditComponent.getElement().querySelector('.event__save-btn').addEventListener('click', (evt) => {
+  eventEditComponent.getElement().querySelector('.event__save-btn').addEventListener('submit', (evt) => {
     evt.preventDefault();
     replaceFormToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
   render(renderListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
-
 };
 
 const boardComponent = document.querySelector('.trip-events');
