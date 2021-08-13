@@ -5,8 +5,6 @@ const calculateCostInfo = (events) =>
   events.map((event) => event.price)
     .reduce((a, b) => a + b);
 
-
-
 const createCostInfoTemplate = (elements) => (
 
   `<p class="trip-info__cost">
