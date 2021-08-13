@@ -28,8 +28,6 @@ events.sort((a, b) => {
 
 const containerRouteAndCost = document.querySelector('.trip-main');
 const containerTripNav = document.querySelector('.trip-controls__navigation');
-const containerEvents = document.querySelector('.trip-events');
-
 
 render(containerRouteAndCost, new RouteInfoView(events).getElement(), RenderPosition.AFTERBEGIN);
 
@@ -40,24 +38,54 @@ render(routeAndCostContainer, new CostInfoView(events).getElement(), RenderPosit
 render(containerTripNav, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 render(containerTripNav, new FiltersView().getElement(), RenderPosition.BEFOREEND);
 
-render(containerEvents, new SortView().getElement(), RenderPosition.BEFOREEND);
-render(containerEvents, new EventListView().getElement(), RenderPosition.BEFOREEND);
+const renderEvent = (renderListElement, event) => {
+  const eventComponent = new EventView(event);
+  const eventEditComponent = new EditModuleView(event);
 
-const eventListContainer = document.querySelector('.trip-events__list');
-
-events.forEach((it, i) => {
-  const eventComponent = new EventView(events[i]);
-  const eventEditComponent = new EditModuleView(events[i]);
-
-  render(eventListContainer, eventComponent.getElement(), RenderPosition.BEFOREEND );
-
-  const replaceCardToForm = (taskListElement) => {
-    taskListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
+  const replaceCardToForm = () => {
+    renderListElement.replaceChild(eventEditComponent.getElement(), eventComponent.getElement());
   };
 
-  eventComponent.getElement().querySelectorAll('.event__rollup-btn').forEach((item) => {})
-});
+  const replaceFormToCard = () => {
+    renderListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
+  };
 
+  const onEscKeyDown = (evt) => {
+    if (evt.key === 'Escape' || evt.key === 'Esc') {
+      evt.preventDefault();
+      replaceFormToCard();
+      document.removeEventListener('keydown', onEscKeyDown);
+    }
+  };
 
+  eventComponent.getElement().querySelector('.event__rollup-btn').addEventListener('click', () => {
+    replaceCardToForm();
+    document.addEventListener('keydown', onEscKeyDown);
+  });
+
+  eventEditComponent.getElement().querySelector('.event__save-btn').addEventListener('click', (evt) => {
+    evt.preventDefault();
+    replaceFormToCard();
+    document.removeEventListener('keydown', onEscKeyDown);
+  });
+
+  render(renderListElement, eventComponent.getElement(), RenderPosition.BEFOREEND);
+
+};
+
+const boardComponent = document.querySelector('.trip-events');
+const renderBoard = (boardContainer, boardTasks) => {
+
+  const taskListComponent = new EventListView();
+
+  render(boardContainer, taskListComponent.getElement(), RenderPosition.BEFOREEND);
+
+  render(boardContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+
+  boardTasks
+    .forEach((boardTask) => renderEvent(taskListComponent.getElement(), boardTask));
+};
+
+renderBoard(boardComponent, events);
 
 export { events };
