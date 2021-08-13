@@ -10,7 +10,7 @@ const calculateCostInfo = (events) =>
 const createCostInfoTemplate = (elements) => (
 
   `<p class="trip-info__cost">
-  Total: &euro;&nbsp;<span class="trip-info__cost-value">${calculateCostInfo(events)}</span>
+  Total: &euro;&nbsp;<span class="trip-info__cost-value">${calculateCostInfo(elements)}</span>
 </p>`
 );
 
