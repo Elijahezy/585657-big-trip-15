@@ -37,9 +37,9 @@ const getRandomArrayElement = (elements) => {
   return elements[result];
 };
 
-const humanizeEventDueDate = (dueDate) => dayjs(dueDate).format('D MMM');
+const humanizeEventDueDate = (dueDate) => dueDate ? dayjs(dueDate).format('D MMM') : '';
 
-const humanizeEventHoursDate = (dueDate) => dayjs(dueDate).format('HH:mm');
+const humanizeEventHoursDate = (dueDate) => dueDate ? dayjs(dueDate).format('HH:mm') : '';
 
 const isEventExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
 

@@ -18,10 +18,10 @@ const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
 
 events.sort((a, b) => {
   if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
-    return 1;
+    return a.day - b.day;
   }
   if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
-    return -1;
+    return a.day - b.day;
   }
   return 0;
 });
@@ -34,6 +34,7 @@ render(containerRouteAndCost, new RouteInfoView(events).getElement(), RenderPosi
 const routeAndCostContainer = document.querySelector('.trip-main__trip-info');
 
 render(routeAndCostContainer, new CostInfoView(events).getElement(), RenderPosition.BEFOREEND);
+
 
 render(containerTripNav, new SiteMenuView().getElement(), RenderPosition.BEFOREEND);
 render(containerTripNav, new FiltersView().getElement(), RenderPosition.BEFOREEND);
@@ -49,6 +50,7 @@ const renderEvent = (renderListElement, event) => {
   const replaceFormToCard = () => {
     renderListElement.replaceChild(eventComponent.getElement(), eventEditComponent.getElement());
   };
+
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -91,5 +93,6 @@ const renderBoard = (boardContainer, boardTasks) => {
 };
 
 renderBoard(boardComponent, events);
+
 
 export { events };

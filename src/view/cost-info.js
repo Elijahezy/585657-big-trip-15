@@ -1,4 +1,6 @@
+
 import { createElement } from '../mock/utils';
+
 const calculateCostInfo = (events) => {
   if (events.length !== 0) {
     return events.map((event) => event.price)
