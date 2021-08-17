@@ -1,8 +1,10 @@
 import { createElement } from '../mock/utils';
-const calculateCostInfo = (events) =>
-  events.map((event) => event.price)
-    .reduce((a, b) => a + b);
-
+const calculateCostInfo = (events) =>{
+  if(events.length !== 0) {
+    events.map((event) => event.price)
+      .reduce((a, b) => a + b);
+  } return 'No money spend yet';
+};
 
 const createCostInfoTemplate = (elements) => (
   `<p class="trip-info__cost">
