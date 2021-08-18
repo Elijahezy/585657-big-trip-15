@@ -13,6 +13,7 @@ const createOfferTemplate = (offerTitle, offerPrice) => (
 const createOfferTemplateList = (eventOffers) => eventOffers.offers.map((offer) => createOfferTemplate(offer.title, offer.price));
 
 const createEventTemplate = (event) => {
+
   const {type, start, end, price, offer, isFavorite, day, destination } = event;
 
   const startHour = humanizeEventHoursDate(start);

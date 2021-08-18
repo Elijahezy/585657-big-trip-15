@@ -6,9 +6,9 @@ const getRouteDestinationList = (events) => {
   return filteredRouteNames;
 };
 
-
 const createRouteInfoTemplate = (events) =>
   `<section class="trip-main__trip-info  trip-info">
+
       <div class="trip-info__main">
         <h1 class="trip-info__title">${getRouteDestinationList(events)}</h1>
 

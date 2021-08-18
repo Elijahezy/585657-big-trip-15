@@ -18,10 +18,10 @@ const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
 
 events.sort((a, b) => {
   if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
-    return 1;
+    return a.day - b.day;
   }
   if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
-    return -1;
+    return a.day - b.day;
   }
   return 0;
 });
@@ -49,6 +49,7 @@ const renderEvent = (renderListElement, event) => {
   const replaceFormToCard = () => {
     replace(eventComponent, eventEditComponent);
   };
+
 
   const onEscKeyDown = (evt) => {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
@@ -91,5 +92,6 @@ const renderBoard = (boardContainer, boardTasks) => {
 };
 
 renderBoard(boardComponent, events);
+
 
 export { events };
