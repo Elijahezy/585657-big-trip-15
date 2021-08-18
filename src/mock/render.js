@@ -6,6 +6,7 @@ import SortView from '../view/sort.js';
 import EventListView from '../view/event-list.js';
 import EventView from '../view/event.js';
 import EditModuleView from '../view/event-edit.js';
+import NoEventsView from '../view/no-events.js';
 import { generateRoutePoints } from './data.js';
 import dayjs from 'dayjs';
 
@@ -81,6 +82,11 @@ const renderBoard = (boardContainer, boardTasks) => {
   render(boardContainer, taskListComponent.getElement(), RenderPosition.BEFOREEND);
 
   render(boardContainer, new SortView().getElement(), RenderPosition.AFTERBEGIN);
+
+  if (boardTasks.every((task) => !task)) {
+    render(boardContainer, new NoEventsView().getElement(), RenderPosition.BEFOREEND);
+    return;
+  }
 
   boardTasks
     .forEach((boardTask) => renderEvent(taskListComponent.getElement(), boardTask));
