@@ -1,5 +1,4 @@
-
-import { createElement } from '../mock/utils';
+import AbstractView from './abstract';
 
 const calculateCostInfo = (events) => {
   if (events.length !== 0) {
@@ -14,26 +13,13 @@ const createCostInfoTemplate = (events) => (
 </p>`
 );
 
-export default class CostInfo {
+export default class CostInfo extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createCostInfoTemplate(this._event);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
-

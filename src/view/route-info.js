@@ -1,5 +1,4 @@
-
-import { createElement } from '../mock/utils';
+import AbstractView from './abstract';
 
 const getRouteDestinationList = (events) => {
   const routeNames = events.map((event) => event.destination.name);
@@ -18,26 +17,13 @@ const createRouteInfoTemplate = (events) =>
 
     </section>`;
 
-export default class RouteInfo {
+export default class RouteInfo extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createRouteInfoTemplate(this._event);
   }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
 }
-

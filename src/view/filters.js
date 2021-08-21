@@ -1,4 +1,4 @@
-import { createElement } from '../mock/utils';
+import AbstractView from './abstract';
 
 const createFiltersTemplate = () => (`<form class="trip-filters" action="#" method="get">
 <div class="trip-filters__filter">
@@ -19,24 +19,8 @@ const createFiltersTemplate = () => (`<form class="trip-filters" action="#" meth
 <button class="visually-hidden" type="submit">Accept filter</button>
 </form>`);
 
-export default class Filters {
-  constructor() {
-    this._element = null;
-  }
-
-  getTemplate(events) {
-    return createFiltersTemplate(events);
-  }
-
-  getElement(events) {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate(events));
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+export default class Filters extends AbstractView {
+  getTemplate() {
+    return createFiltersTemplate();
   }
 }

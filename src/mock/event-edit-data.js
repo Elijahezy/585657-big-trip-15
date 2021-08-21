@@ -1,13 +1,19 @@
 import { POINTS } from '../consts';
 
-const createEventType = (eventType) => (
+const isChecked = (type, currentType) => {
+  if  (type === currentType) {
+    return 'checked';
+  } return '';
+};
+
+const createEventType = (type, currentType) => (
   `<div class="event__type-item">
-  <input id="event-type-${eventType.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${eventType.toLowerCase()}">
-  <label class="event__type-label  event__type-label--${eventType.toLowerCase()}" for="event-type-${eventType.toLowerCase()}-1">${eventType}</label>
+  <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${isChecked(type.toLowerCase(), currentType.toLowerCase())}>
+  <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
   </div>`
 );
 
-const createEventTypeList = () => POINTS.map((point) => createEventType(point));
+const createEventTypeList = (currentType) => POINTS.map((point) => createEventType(point, currentType));
 
 const createEventOffer = (offerTitle, offerPrice, offerName) => (
   `<div class="event__offer-selector">

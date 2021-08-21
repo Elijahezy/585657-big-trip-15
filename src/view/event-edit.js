@@ -1,5 +1,6 @@
-import { humanizeEventHoursDate, createElement } from '../mock/utils';
+import { humanizeEventHoursDate } from '../utils/event.js';
 import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
+import AbstractView from './abstract';
 
 const createDestinationOptions = (destination) => (
   `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
@@ -17,7 +18,6 @@ const createEditModuleTemplate = (event = {}) => {
 
   const endHour = humanizeEventHoursDate(end);
 
-
   return `<form class="event event--edit" action="#" method="post">
 <header class="event__header">
   <div class="event__type-wrapper">
@@ -30,7 +30,7 @@ const createEditModuleTemplate = (event = {}) => {
     <div class="event__type-list">
       <fieldset class="event__type-group">
         <legend class="visually-hidden">Event type</legend>
-        ${createEventTypeList().join('')}
+        ${createEventTypeList(type).join('')}
       </fieldset>
     </div>
   </div>
@@ -82,26 +82,25 @@ const createEditModuleTemplate = (event = {}) => {
 };
 
 
-export default class EditModule {
+export default class EditModule extends AbstractView {
   constructor(event) {
+    super();
     this._event = event;
-    this._element = null;
   }
 
   getTemplate() {
     return createEditModuleTemplate(this._event);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _formSubmitHandler(evt) {
+    evt.preventDefault();
+    this._callback.formSubmit();
   }
 
-  removeElement() {
-    this._element = null;
+  setFormSubmitHandler(callback) {
+    this._callback.formSubmit = callback;
+    this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
   }
 }
+
 
