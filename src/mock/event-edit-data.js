@@ -1,10 +1,6 @@
 import { POINTS } from '../consts';
 
-const isChecked = (type, currentType) => {
-  if  (type === currentType) {
-    return 'checked';
-  } return '';
-};
+const isChecked = (type, currentType) => type === currentType ? 'checked' : '';
 
 const createEventType = (type, currentType) => (
   `<div class="event__type-item">

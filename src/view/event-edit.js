@@ -82,10 +82,12 @@ const createEditModuleTemplate = (event = {}) => {
 };
 
 
-export default class EditModule extends AbstractView {
+export default class EventEdit extends AbstractView {
   constructor(event) {
     super();
     this._event = event;
+
+    this._formSubmitHandler = this._formSubmitHandler.bind(this);
   }
 
   getTemplate() {
@@ -94,7 +96,7 @@ export default class EditModule extends AbstractView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit();
+    this._callback.formSubmit(this._event);
   }
 
   setFormSubmitHandler(callback) {

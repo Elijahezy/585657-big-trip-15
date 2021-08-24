@@ -1,6 +1,7 @@
 import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 import { POINTS, OFFER_LIST, CITIES } from '../consts';
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
 
 const timeGaps = {
   day: {
@@ -77,6 +78,7 @@ const generateRoutePoints = () => {
   const type = getRandomArrayElement(POINTS);
   const [start, end] = [generateHours(), generateHours()].sort((a, b) => a - b);
   return {
+    id: nanoid(),
     type,
     destination,
     offer: getOffer(type),
