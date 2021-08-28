@@ -5,6 +5,8 @@ import NoEventsView from '../view/no-events.js';
 import { render, RenderPosition } from '../utils/render.js';
 import EventPresenter from './event.js';
 import { updateItem } from '../utils/common.js';
+import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
+import { SortType } from '../consts.js';
 
 export default class Route {
   constructor(routeContainer) {
@@ -15,18 +17,32 @@ export default class Route {
     this._noEventComponent = new NoEventsView();
     this._eventListComponent = new EventListView();
     this._eventPresenter = new Map();
+    this._currentSortType = SortType.DAY;
 
     this._handleEventChange = this._handleEventChange.bind(this);
     this._handleModeChange = this._handleModeChange.bind(this);
+    this._handleSortTypeChange = this._handleSortTypeChange.bind(this);
   }
 
   init(routeEvents) {
     this._routeEvents = routeEvents.slice();
 
+    this._sourcedRouteEvents = routeEvents.slice();
+
     render(this._routeContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._eventListComponent, RenderPosition.BEFOREEND);
 
     this._renderBoard();
+  }
+
+
+  _handleSortTypeChange(sortType) {
+    if (this._currentSortType === sortType) {
+      return;
+    }
+    this._sortEvents(sortType);
+    this._clearEventList();
+    this._renderEventsList();
   }
 
   _handleModeChange() {
@@ -36,16 +52,36 @@ export default class Route {
   _handleEventChange(updatedEvent) {
     this._routeEvents = updateItem(this._routeEvents, updatedEvent);
     this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
+    this._sourcedRouteEvents = updateItem(this._sourcedRouteEvents, updatedEvent);
   }
 
   _renderSort() {
     render(this._boardComponent, this._sortComponent, RenderPosition.AFTERBEGIN);
+    this._sortComponent.setSortTypeChangeHandler(this._handleSortTypeChange);
   }
 
   _renderEvent(event) {
     const eventPresenter = new EventPresenter(this._eventListComponent, this._handleEventChange, this._handleModeChange);
     eventPresenter.init(event);
     this._eventPresenter.set(event.id, eventPresenter);
+  }
+
+  _sortEvents(sortType) {
+    switch (sortType) {
+      case SortType.DAY:
+        this._routeEvents.sort(sortByDay);
+        break;
+      case SortType.TIME:
+        this._routeEvents.sort(sortByTime);
+        break;
+      case SortType.PRICE:
+        this._routeEvents.sort(sortByPrice);
+        break;
+      default:
+        this._routeEvents = this._sourcedRouteEvents.slice();
+    }
+
+    this._currentSortType = sortType;
   }
 
   _renderEvents() {

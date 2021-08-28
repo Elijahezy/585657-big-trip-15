@@ -153,5 +153,10 @@ const OFFER_LIST = {
   },
 };
 
+export const SortType = {
+  DAY: 'day',
+  TIME: 'time',
+  PRICE: 'price',
+};
 
 export { POINTS, CITIES, OFFER_LIST };

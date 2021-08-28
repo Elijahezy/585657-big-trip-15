@@ -60,8 +60,8 @@ export default class Event {
   }
 
   destroy() {
-    remove(this._taskComponent);
-    remove(this._taskEditComponent);
+    remove(this._eventComponent);
+    remove(this._eventEditComponent);
   }
 
   _replaceCardToForm() {
