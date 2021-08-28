@@ -12,15 +12,15 @@ const DEFAULT_EVENTS = 18;
 
 const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
 
-events.sort((a, b) => {
-  if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
-    return a.day - b.day;
-  }
-  if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
-    return a.day - b.day;
-  }
-  return 0;
-});
+// events.sort((a, b) => {
+//   if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
+//     return a.day - b.day;
+//   }
+//   if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
+//     return a.day - b.day;
+//   }
+//   return 0;
+// });
 
 const containerRouteAndCost = document.querySelector('.trip-main');
 const containerTripNav = document.querySelector('.trip-controls__navigation');
