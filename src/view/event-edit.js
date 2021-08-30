@@ -1,18 +1,32 @@
 import { humanizeEventHoursDate } from '../utils/event.js';
 import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
-import AbstractView from './abstract';
+import SmartView from './smart.js';
+import { getOffer, DESTINATIONS } from '../mock/data.js';
 
-const createDestinationOptions = (destination) => (
-  `<input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
-  <datalist id="destination-list-1">
-    <option value="Amsterdam"></option>
-    <option value="Geneva"></option>
-    <option value="Chamonix"></option>
-  </datalist>`
-);
+const createDestinationPhotos = (destination) => destination.photos.map((item) => `<img class="event__photo" src="${item}" alt="Event photo"></img>`);
 
-const createEditModuleTemplate = (event = {}) => {
-  const {type, start, end, price, offer, destination } = event;
+const createDestinationPhotosContainer = (destination) =>
+  `<div class="event__photos-container">
+    <div class="event__photos-tape">
+      ${createDestinationPhotos(destination)}
+    </div>
+  </div>`;
+
+const createSingleDestinationOption = (destination, otherDestinations) => {
+  const options = Object.values(otherDestinations);
+  return options.map((item) => {
+    if(item.name !== destination.name) {
+      return `<option value="${item.name}"></option>`;
+    }
+  }).join(' ');
+};
+const createDestinationOptions = (destination, otherDestinations) =>
+  `<datalist id="destination-list-1">
+    ${createSingleDestinationOption(destination, otherDestinations)}
+  </datalist>`;
+
+const createEditModuleTemplate = (data = {}) => {
+  const {type, start, end, price, offer, destination } = data;
 
   const startHour = humanizeEventHoursDate(start);
 
@@ -39,7 +53,8 @@ const createEditModuleTemplate = (event = {}) => {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
-    ${createDestinationOptions(destination)}
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+    ${createDestinationOptions(destination, DESTINATIONS)}
   </div>
 
   <div class="event__field-group  event__field-group--time">
@@ -76,33 +91,74 @@ const createEditModuleTemplate = (event = {}) => {
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
     <p class="event__destination-description">${destination.description}</p>
+    ${createDestinationPhotosContainer(destination)}
   </section>
 </section>
 </form>`;
 };
 
 
-export default class EventEdit extends AbstractView {
+export default class EventEdit extends SmartView {
   constructor(event) {
     super();
-    this._event = event;
+    this._data = EventEdit.parseEventToData(event);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
+
+    this._changeEventType = this._changeEventType.bind(this);
+
+    this._setInnerHandlers();
+  }
+
+  reset(event) {
+    this.updateData(EventEdit.parseEventToData(event));
   }
 
   getTemplate() {
-    return createEditModuleTemplate(this._event);
+    return createEditModuleTemplate(this._data);
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+  }
+
+  _setInnerHandlers() {
+    this.getElement().querySelectorAll('.event__type-input').forEach((item) => item.addEventListener('change', this._changeEventType));
   }
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
-    this._callback.formSubmit(this._event);
+    this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
   }
+
+  _changeEventType(evt) {
+    evt.preventDefault();
+    this.updateData({
+      type: evt.target.dataset.eventType.toLowerCase(),
+      offer: getOffer(evt.target.dataset.eventType),
+    });
+  }
+
+  static parseEventToData(event) {
+    return Object.assign(
+      {},
+      event,
+      {
+      },
+    );
+  }
+
+  static parseDataToEvent(data) {
+    data = Object.assign({}, data);
+
+    return data;
+  }
+
 }
 
 
