@@ -32,7 +32,7 @@ const getRandomPhotos = () => {
   return filteredPhotos;
 };
 
-export const DESTINATIONS = {
+const DESTINATIONS = {
   Berlin: {
     name: 'Berlin',
     description:  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
@@ -67,7 +67,7 @@ const generateDays = () => {
   return dayjs().add(daysGap, 'day').toDate();
 };
 
-export const getOffer = (offerName) => {
+const getOffer = (offerName) => {
   const offerTypes = Object.values(OFFER_LIST);
   const requiredOffer = offerTypes.find((offer) => offer.type === offerName);
   return requiredOffer;
@@ -89,5 +89,5 @@ const generateRoutePoints = () => {
   };
 };
 
-export { generateRoutePoints };
+export { generateRoutePoints, getOffer, DESTINATIONS };
 

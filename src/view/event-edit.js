@@ -1,7 +1,8 @@
 import { humanizeEventHoursDate } from '../utils/event.js';
 import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
 import SmartView from './smart.js';
-import { getOffer, DESTINATIONS } from '../mock/data.js';
+import { DESTINATIONS } from '../mock/data.js';
+import { OFFER_LIST } from '../consts.js';
 
 const createDestinationPhotos = (destination) => destination.photos.map((item) => `<img class="event__photo" src="${item}" alt="Event photo"></img>`);
 
@@ -12,17 +13,14 @@ const createDestinationPhotosContainer = (destination) =>
     </div>
   </div>`;
 
-const createSingleDestinationOption = (destination, otherDestinations) => {
-  const options = Object.values(otherDestinations);
-  return options.map((item) => {
-    if(item.name !== destination.name) {
-      return `<option value="${item.name}"></option>`;
-    }
-  }).join(' ');
+
+const createSingleDestinationOption = (typesOfDestinations) => {
+  const options = Object.values(typesOfDestinations);
+  return options.map((destination) => `<option value="${destination.name}"></option>`).join(' ');
 };
-const createDestinationOptions = (destination, otherDestinations) =>
+const createDestinationOptions = (typesOfDestinations) =>
   `<datalist id="destination-list-1">
-    ${createSingleDestinationOption(destination, otherDestinations)}
+    ${createSingleDestinationOption(typesOfDestinations)}
   </datalist>`;
 
 const createEditModuleTemplate = (data = {}) => {
@@ -54,7 +52,7 @@ const createEditModuleTemplate = (data = {}) => {
       ${type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
-    ${createDestinationOptions(destination, DESTINATIONS)}
+    ${createDestinationOptions(DESTINATIONS)}
   </div>
 
   <div class="event__field-group  event__field-group--time">
@@ -93,6 +91,7 @@ const createEditModuleTemplate = (data = {}) => {
     <p class="event__destination-description">${destination.description}</p>
     ${createDestinationPhotosContainer(destination)}
   </section>
+
 </section>
 </form>`;
 };
@@ -104,8 +103,8 @@ export default class EventEdit extends SmartView {
     this._data = EventEdit.parseEventToData(event);
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
-
     this._changeEventType = this._changeEventType.bind(this);
+    this._changeDestinationType = this._changeDestinationType.bind(this);
 
     this._setInnerHandlers();
   }
@@ -123,6 +122,7 @@ export default class EventEdit extends SmartView {
   }
 
   _setInnerHandlers() {
+    this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeDestinationType);
     this.getElement().querySelectorAll('.event__type-input').forEach((item) => item.addEventListener('change', this._changeEventType));
   }
 
@@ -136,11 +136,30 @@ export default class EventEdit extends SmartView {
     this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
   }
 
+  _getNewDestination(requiredPoint) {
+    const destinationTypes = Object.values(DESTINATIONS);
+    const requiredDestination = destinationTypes.find((point) => point.name === requiredPoint);
+    return requiredDestination;
+  }
+
+  _getNewOffer(offerName) {
+    const offerTypes = Object.values(OFFER_LIST);
+    const requiredOffer = offerTypes.find((offer) => offer.type === offerName);
+    return requiredOffer;
+  }
+
+  _changeDestinationType(evt) {
+    evt.preventDefault();
+    this.updateData({
+      destination: this._getNewDestination(evt.target.value),
+    });
+  }
+
   _changeEventType(evt) {
     evt.preventDefault();
     this.updateData({
       type: evt.target.dataset.eventType.toLowerCase(),
-      offer: getOffer(evt.target.dataset.eventType),
+      offer: this._getNewOffer(evt.target.dataset.eventType),
     });
   }
 

@@ -1,6 +1,5 @@
 const POINTS = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
-
 const OFFER_LIST = {
   flight: {
     type: 'Flight',
@@ -153,10 +152,10 @@ const OFFER_LIST = {
   },
 };
 
-export const SortType = {
+const SortType = {
   DAY: 'day',
   TIME: 'time',
   PRICE: 'price',
 };
 
-export { POINTS, OFFER_LIST };
+export { POINTS, OFFER_LIST, SortType };
