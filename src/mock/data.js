@@ -56,15 +56,15 @@ const getRandomDestination = () => {
   return finalDestination;
 };
 
-const generateHours = () => {
-  const hoursGap = getRandomInteger(timeGaps.hour.min, timeGaps.hour.max);
-  const minutesGap = getRandomInteger(timeGaps.minute.min, timeGaps.minute.max);
-  return dayjs().add(hoursGap, 'hour').add(minutesGap, 'minute').toDate();
-};
-
 const generateDays = () => {
   const daysGap = getRandomInteger(timeGaps.day.min, timeGaps.day.max);
   return dayjs().add(daysGap, 'day').toDate();
+};
+
+const generateHours = (number) => {
+  const hoursGap = getRandomInteger(timeGaps.hour.min, timeGaps.hour.max);
+  const minutesGap = getRandomInteger(timeGaps.minute.min, timeGaps.minute.max);
+  return dayjs(number).add(hoursGap, 'hour').add(minutesGap, 'minute').toDate();
 };
 
 const getOffer = (offerName) => {
@@ -75,7 +75,8 @@ const getOffer = (offerName) => {
 
 const generateRoutePoints = () => {
   const type = getRandomArrayElement(POINTS);
-  const [start, end] = [generateHours(), generateHours()].sort((a, b) => a - b);
+  const day = generateDays();
+  const [start, end] = [generateHours(day), generateHours(day)].sort((a, b) => a - b);
   return {
     id: nanoid(),
     type,
@@ -84,7 +85,7 @@ const generateRoutePoints = () => {
     price: getRandomInteger(price.min, price.max),
     start,
     end,
-    day: generateDays(),
+    day,
     isFavorite: Boolean(getRandomInteger(0,1)),
   };
 };

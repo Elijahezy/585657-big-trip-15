@@ -11,10 +11,10 @@ const createEventType = (type, currentType) => (
 
 const createEventTypeList = (currentType) => POINTS.map((point) => createEventType(point, currentType));
 
-const createEventOffer = (offerTitle, offerPrice, offerName) => (
+const createEventOffer = (offerTitle, offerPrice) => (
   `<div class="event__offer-selector">
-<input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerName}-1" type="checkbox" name="event-offer-${offerName}" checked>
-<label class="event__offer-label" for="event-offer-${offerName}-1">
+<input class="event__offer-checkbox  visually-hidden" id="event-offer-${offerTitle.toLowerCase()}-1" type="checkbox" name="event-offer-${offerTitle.toLowerCase()}" checked>
+<label class="event__offer-label" for="event-offer-${offerTitle.toLowerCase()}-1">
   <span class="event__offer-title">${offerTitle}</span>
   &plus;&euro;&nbsp;
   <span class="event__offer-price">${offerPrice}</span>
