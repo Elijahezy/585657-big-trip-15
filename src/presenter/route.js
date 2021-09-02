@@ -4,7 +4,7 @@ import BoardView from '../view/board.js';
 import NoEventsView from '../view/no-events.js';
 import { render, RenderPosition } from '../utils/render.js';
 import EventPresenter from './event.js';
-import { updateItem } from '../utils/common.js';
+import { updatedItem } from '../utils/common.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 import { SortType } from '../consts.js';
 
@@ -50,9 +50,9 @@ export default class Route {
   }
 
   _handleEventChange(updatedEvent) {
-    this._routeEvents = updateItem(this._routeEvents, updatedEvent);
+    this._routeEvents = updatedItem(this._routeEvents, updatedEvent);
     this._eventPresenter.get(updatedEvent.id).init(updatedEvent);
-    this._sourcedRouteEvents = updateItem(this._sourcedRouteEvents, updatedEvent);
+    this._sourcedRouteEvents = updatedItem(this._sourcedRouteEvents, updatedEvent);
   }
 
   _renderSort() {

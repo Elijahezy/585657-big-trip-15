@@ -1,5 +1,5 @@
 import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
-import { POINTS, OFFER_LIST, CITIES } from '../consts';
+import { POINTS, OFFER_LIST } from '../consts';
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 
@@ -23,19 +23,38 @@ const price = {
   max: 400,
 };
 
-const MAX_PHOTOS = 3;
+const MAX_PHOTOS = 10;
 
-const DESCRIPTIONS = [ 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-  'Cras aliquet varius magna, non porta ligula feugiat eget.',
-  'Fusce tristique felis at fermentum pharetra.',
-  'Aliquam id orci ut lectus varius viverra.',
-  'Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante.',
-  'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
-  'Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui.',
-  'Sed sed nisi sed augue convallis suscipit in sed felis.',
-  'Aliquam erat volutpat.',
-  'Nunc fermentum tortor ac porta dapibus.',
-  'In rutrum ac purus sit amet tempus.' ];
+const getRandomPhotos = () => {
+  const getPhoto = () => `http://picsum.photos/248/152?r=${getRandomInteger(1, MAX_PHOTOS)}`;
+  const photos = new Array(getRandomInteger(1, MAX_PHOTOS)).fill().map(getPhoto);
+  const filteredPhotos = photos.filter((photo, index) => photos.indexOf(photo) === index);
+  return filteredPhotos;
+};
+
+const DESTINATIONS = {
+  Berlin: {
+    name: 'Berlin',
+    description:  'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    photos: getRandomPhotos(),
+  },
+  NewYork: {
+    name: 'New-York',
+    description: 'Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum.',
+    photos: getRandomPhotos(),
+  },
+  Moscow: {
+    name: 'Moscow',
+    description: 'Aliquam erat volutpat.',
+    photos: getRandomPhotos(),
+  },
+};
+
+const getRandomDestination = () => {
+  const destinations = Object.values(DESTINATIONS);
+  const finalDestination = getRandomArrayElement(destinations);
+  return finalDestination;
+};
 
 const generateHours = () => {
   const hoursGap = getRandomInteger(timeGaps.hour.min, timeGaps.hour.max);
@@ -48,31 +67,11 @@ const generateDays = () => {
   return dayjs().add(daysGap, 'day').toDate();
 };
 
-const getRandomPhoto = () => {
-  const getPhoto = () => `http://picsum.photos/248/152?r=${getRandomInteger(1, MAX_PHOTOS)}`;
-  const photos = new Array(getRandomInteger(1, MAX_PHOTOS)).fill().map(getPhoto);
-  const filteredPhotos = photos.filter((photo, index) => photos.indexOf(photo) === index);
-  return filteredPhotos;
-};
-
 const getOffer = (offerName) => {
   const offerTypes = Object.values(OFFER_LIST);
   const requiredOffer = offerTypes.find((offer) => offer.type === offerName);
   return requiredOffer;
 };
-
-const destination = (
-  {
-    description: getRandomArrayElement(DESCRIPTIONS),
-    name: getRandomArrayElement(CITIES),
-    pictures: [
-      {
-        src: getRandomPhoto(),
-        description: getRandomArrayElement(DESCRIPTIONS),
-      },
-    ],
-  }
-);
 
 const generateRoutePoints = () => {
   const type = getRandomArrayElement(POINTS);
@@ -80,7 +79,7 @@ const generateRoutePoints = () => {
   return {
     id: nanoid(),
     type,
-    destination,
+    destination: getRandomDestination(),
     offer: getOffer(type),
     price: getRandomInteger(price.min, price.max),
     start,
@@ -90,5 +89,5 @@ const generateRoutePoints = () => {
   };
 };
 
-export { generateRoutePoints };
+export { generateRoutePoints, getOffer, DESTINATIONS };
 
