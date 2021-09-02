@@ -222,11 +222,8 @@ export default class EventEdit extends SmartView {
   }
 
   static parseDataToEvent(data) {
-    const newData = Object.assign({}, data);
-
-    return newData;
+    return {...data};
   }
-
 }
 
 
