@@ -1,5 +1,4 @@
-import dayjs from 'dayjs';
-import { humanizeEventHoursDate, humanizeEventDueDate } from '../utils/event.js';
+import { humanizeEventHoursDate, humanizeEventDueDate, getDuration } from '../utils/event.js';
 import AbstractView from './abstract';
 
 const createOfferTemplate = (offerTitle, offerPrice) => (
@@ -22,14 +21,6 @@ const createEventTemplate = (event) => {
 
   const dueDate = humanizeEventDueDate(day);
 
-  const diffHour = () => {
-    if (dayjs(end).diff(start, 'hour')) {
-      return `${dayjs(end).diff(start, 'hour')  }H`;
-    }
-    return `${dayjs(end).diff(start, 'minute')  }M`;
-  };
-
-
   return `<li class="trip-events__item">
               <div class="event">
                 <time class="event__date" datetime="${day}">${dueDate}</time>
@@ -43,7 +34,7 @@ const createEventTemplate = (event) => {
                     &mdash;
                     <time class="event__end-time" datetime="${end}">${endHour}</time>
                   </p>
-                  <p class="event__duration">${diffHour()}</p>
+                  <p class="event__duration">${getDuration(start, end)}</p>
                 </div>
                 <p class="event__price">
                   &euro;&nbsp;<span class="event__price-value">${price}</span>
@@ -62,8 +53,7 @@ const createEventTemplate = (event) => {
                   <span class="visually-hidden">Open event</span>
                 </button>
               </div>
-            </li>
-`;
+            </li>`;
 };
 
 export default class Event extends AbstractView {
