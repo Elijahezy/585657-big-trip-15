@@ -156,6 +156,8 @@ const SortType = {
   DAY: 'day',
   TIME: 'time',
   PRICE: 'price',
+  EVENT: 'event',
+  OFFERS: 'offers',
 };
 
 const MILLISECONDS_IN_DAY = 86400000;
@@ -164,6 +166,24 @@ const MILLISECONDS_IN_MINUTE = 60000;
 
 const UNIX_START_DAY = 1;
 
+const UpdateType = {
+  PATCH: 'PATCH',
+  MINOR: 'MINOR',
+  MAJOR: 'MAJOR',
+};
+
+const FilterType = {
+  EVERYTHING: 'everything',
+  FUTURE: 'future',
+  PAST: 'past',
+};
+
+const UserAction = {
+  UPDATE_EVENT: 'UPDATE_EVENT',
+  ADD_EVENT: 'ADD_EVENT',
+  DELETE_EVENT: 'DELETE_EVENT',
+};
+
 export {
   POINTS,
   OFFER_LIST,
@@ -171,5 +191,9 @@ export {
   MILLISECONDS_IN_DAY,
   MILLISECONDS_IN_HOUR,
   MILLISECONDS_IN_MINUTE,
-  UNIX_START_DAY
+  UNIX_START_DAY,
+  FilterType,
+  UpdateType,
+  UserAction
 };
+

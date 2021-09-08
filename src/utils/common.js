@@ -9,17 +9,3 @@ export const getRandomArrayElement = (elements) => {
   const result = Math.floor(Math.random() * elements.length);
   return elements[result];
 };
-
-export const updatedItem = (items, update) => {
-  const index = items.findIndex((item) => item.id === update.id);
-
-  if (index === -1) {
-    return items;
-  }
-
-  return [
-    ...items.slice(0, index),
-    update,
-    ...items.slice(index + 1),
-  ];
-};

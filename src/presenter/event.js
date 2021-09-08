@@ -1,6 +1,7 @@
 import EventView from '../view/event.js';
 import EventEditView from '../view/event-edit.js';
 import { render, RenderPosition, replace, remove } from '../utils/render.js';
+import { UserAction, UpdateType } from '../consts.js';
 
 const Mode = {
   DEFAULT: 'DEFAULT',
@@ -10,7 +11,7 @@ const Mode = {
 export default class Event {
   constructor(eventListContainer, changeData, changeMode) {
     this._eventListContainer = eventListContainer;
-    this._changeDate = changeData;
+    this._changeData = changeData;
     this._changeMode = changeMode;
 
     this._eventComponent = null;
@@ -21,6 +22,7 @@ export default class Event {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
+    this._handleDeleteClick = this._handleDeleteClick.bind(this);
   }
 
   init(event) {
@@ -35,6 +37,7 @@ export default class Event {
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
+    this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventListContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -64,6 +67,14 @@ export default class Event {
     remove(this._eventEditComponent);
   }
 
+  _handleDeleteClick(event) {
+    this._changeData(
+      UserAction.DELETE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
+  }
+
   _replaceCardToForm() {
     replace(this._eventEditComponent, this._eventComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
@@ -86,7 +97,9 @@ export default class Event {
   }
 
   _handleFavoriteClick() {
-    this._changeDate(
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
       Object.assign(
         {},
         this._event,
@@ -101,8 +114,12 @@ export default class Event {
     this._replaceCardToForm();
   }
 
-  _handleFormSubmit() {
-    this._changeDate(event);
+  _handleFormSubmit(event) {
+    this._changeData(
+      UserAction.UPDATE_EVENT,
+      UpdateType.MINOR,
+      event,
+    );
     this._replaceFormToCard();
   }
 }

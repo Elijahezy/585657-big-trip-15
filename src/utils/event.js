@@ -28,3 +28,5 @@ export const getDuration = (from, to) => {
   duration = duration + new Date(duration).getTimezoneOffset() * MILLISECONDS_IN_MINUTE;
   return dayjs(duration).subtract(UNIX_START_DAY, 'day').format(formatString);
 };
+
+export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');

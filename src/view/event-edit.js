@@ -1,10 +1,22 @@
 import { humanizeEventHoursDate } from '../utils/event.js';
 import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
 import SmartView from './smart.js';
-import { DESTINATIONS } from '../mock/data.js';
+import { DESTINATIONS, getOffer } from '../mock/data.js';
 import { OFFER_LIST } from '../consts.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
+
+const BLANK_EVENT = {
+  type: 'taxi',
+  destination: '',
+  offer: getOffer('Taxi'),
+  price: '',
+  start: dayjs().toDate(),
+  end: dayjs().toDate(),
+  day: '',
+  isFavorite: false,
+};
 
 const createDestinationPhotos = (destination) => destination.photos.map((item) => `<img class="event__photo" src="${item}" alt="Event photo"></img>`);
 
@@ -53,7 +65,7 @@ const createEditModuleTemplate = (data = {}) => {
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destination.name}" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" onkeyup="this.value = this.value.replace(/[^]/g,'');" value="${destination ? destination.name : ''}" list="destination-list-1">
     ${createDestinationOptions(DESTINATIONS)}
   </div>
 
@@ -70,7 +82,7 @@ const createEditModuleTemplate = (data = {}) => {
       <span class="visually-hidden">Price</span>
       &euro;
     </label>
-    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${price}">
+    <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" value="${price}">
   </div>
 
   <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
@@ -84,14 +96,14 @@ const createEditModuleTemplate = (data = {}) => {
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${createOfferList(offer).join('')}
+      ${createOfferList(offer)}
     </div>
   </section>
 
   <section class="event__section  event__section--destination">
     <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-    <p class="event__destination-description">${destination.description}</p>
-    ${createDestinationPhotosContainer(destination)}
+    <p class="event__destination-description">${destination ? destination.description : ''}</p>
+    ${destination ? createDestinationPhotosContainer(destination) : ''}
   </section>
 
 </section>
@@ -100,7 +112,7 @@ const createEditModuleTemplate = (data = {}) => {
 
 
 export default class EventEdit extends SmartView {
-  constructor(event) {
+  constructor(event = BLANK_EVENT) {
     super();
     this._data = EventEdit.parseEventToData(event);
     this._startDayPicker = null;
@@ -111,7 +123,7 @@ export default class EventEdit extends SmartView {
     this._changeDestinationType = this._changeDestinationType.bind(this);
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
-
+    this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepicker();
@@ -128,11 +140,36 @@ export default class EventEdit extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepicker();
+    this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
     this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
+  }
+
+  removeElement() {
+    super.removeElement();
+
+    if (this._startDayPicker) {
+      this._startDayPicker.destroy();
+      this._startDayPicker = null;
+    }
+
+    if (this._endDayPicker) {
+      this._endDayPicker.destroy();
+      this._endDayPicker = null;
+    }
+  }
+
+  setDeleteClickHandler(callback) {
+    this._callback.deleteClick = callback;
+    this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  _formDeleteClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
   }
 
   _setDatepicker() {
