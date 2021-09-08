@@ -47,8 +47,6 @@ export default class Filter {
   }
 
   _getFilters() {
-    const events = this._eventsModel.getEvents();
-
     return [
       {
         type: FilterType.EVERYTHING,
