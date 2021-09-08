@@ -1,9 +1,11 @@
 import RouteInfoView from '../view/route-info.js';
-import FiltersView from '../view/filters.js';
 import SiteMenuView from '../view/menu.js';
 import CostInfoView from '../view/cost-info.js';
 import { generateRoutePoints } from './data.js';
+import FilterPresenter from '../presenter/filter.js';
 import RoutePresenter from '../presenter/route.js';
+import EventsModel from '../model/events-model.js';
+import FilterModel from '../model/filter-model.js';
 import dayjs from 'dayjs';
 
 import { render, RenderPosition } from '../utils/render.js';
@@ -32,12 +34,25 @@ const routeAndCostContainer = document.querySelector('.trip-main__trip-info');
 render(routeAndCostContainer, new CostInfoView(events), RenderPosition.BEFOREEND);
 
 render(containerTripNav, new SiteMenuView(), RenderPosition.BEFOREEND);
-render(containerTripNav, new FiltersView(), RenderPosition.BEFOREEND);
+
+
+const eventsModel = new EventsModel();
+
+eventsModel.setEvents(events);
+
+const filterModel = new FilterModel();
 
 const routeContainer = document.querySelector('.page-body__page-main > .page-body__container');
 
-const routePresenter = new RoutePresenter(routeContainer);
+const routePresenter = new RoutePresenter(routeContainer, eventsModel, filterModel);
+const filterPresenter = new FilterPresenter(containerTripNav, filterModel, eventsModel);
 
-routePresenter.init(events);
+filterPresenter.init();
+routePresenter.init();
+
+document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+  evt.preventDefault();
+  routePresenter.createEvent();
+});
 
 export { events };
