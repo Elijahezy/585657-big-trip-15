@@ -1,6 +1,6 @@
-const POINTS = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
+export const POINTS = ['Taxi', 'Bus', 'Train', 'Ship', 'Drive', 'Flight', 'Check-in', 'Sightseeing', 'Restaurant'];
 
-const OFFER_LIST = {
+export const OFFER_LIST = {
   flight: {
     type: 'Flight',
     offers: [
@@ -152,7 +152,7 @@ const OFFER_LIST = {
   },
 };
 
-const SortType = {
+export const SortType = {
   DAY: 'day',
   TIME: 'time',
   PRICE: 'price',
@@ -160,40 +160,32 @@ const SortType = {
   OFFERS: 'offers',
 };
 
-const MILLISECONDS_IN_DAY = 86400000;
-const MILLISECONDS_IN_HOUR = 3600000;
-const MILLISECONDS_IN_MINUTE = 60000;
+export const MILLISECONDS_IN_DAY = 86400000;
+export const MILLISECONDS_IN_HOUR = 3600000;
+export const MILLISECONDS_IN_MINUTE = 60000;
 
-const UNIX_START_DAY = 1;
+export const UNIX_START_DAY = 1;
 
-const UpdateType = {
+export const UpdateType = {
   PATCH: 'PATCH',
   MINOR: 'MINOR',
   MAJOR: 'MAJOR',
 };
 
-const FilterType = {
+export const FilterType = {
   EVERYTHING: 'everything',
   FUTURE: 'future',
   PAST: 'past',
 };
 
-const UserAction = {
+export const UserAction = {
   UPDATE_EVENT: 'UPDATE_EVENT',
   ADD_EVENT: 'ADD_EVENT',
   DELETE_EVENT: 'DELETE_EVENT',
 };
 
-export {
-  POINTS,
-  OFFER_LIST,
-  SortType,
-  MILLISECONDS_IN_DAY,
-  MILLISECONDS_IN_HOUR,
-  MILLISECONDS_IN_MINUTE,
-  UNIX_START_DAY,
-  FilterType,
-  UpdateType,
-  UserAction
+export const MenuItem = {
+  ADD_NEW_EVENT: 'EVENT',
+  TABLE: 'TABLE',
+  STATS: 'STATS',
 };
-
