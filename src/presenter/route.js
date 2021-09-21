@@ -29,9 +29,6 @@ export default class Route {
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
 
-    this._eventsModel.addObserver(this._handleModelEvent);
-    this._filterModel.addObserver(this._handleModelEvent);
-
     this._eventNewPresenter = new EventNewPresenter(this._eventListComponent, this._handleViewAction);
   }
 
@@ -41,7 +38,21 @@ export default class Route {
 
     this._eventsModel.addObserver(this._handleModelEvent);
 
+
+    this._eventsModel.addObserver(this._handleModelEvent);
+    this._filterModel.addObserver(this._handleModelEvent);
+
     this._renderBoard();
+  }
+
+  destroy() {
+    this._clearBoard();
+
+    remove(this._eventListComponent);
+    remove(this._boardComponent);
+
+    this._eventsModel.removeObserver(this._handleModelEvent);
+    this._filterModel.removeObserver(this._handleModelEvent);
   }
 
   createEvent() {

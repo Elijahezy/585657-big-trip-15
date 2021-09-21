@@ -29,4 +29,5 @@ export const getDuration = (from, to) => {
   return dayjs(duration).subtract(UNIX_START_DAY, 'day').format(formatString);
 };
 
-export const isDatesEqual = (dateA, dateB) => (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
+export const isDatesEqual = (dateA, dateB) =>
+  (dateA === null && dateB === null) ? true : dayjs(dateA).isSame(dateB, 'D');
