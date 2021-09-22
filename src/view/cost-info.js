@@ -1,25 +1,23 @@
 import AbstractView from './abstract';
 
 const calculateCostInfo = (events) => {
-  if (events.length !== 0) {
+  if (events.length) {
     return events.map((event) => event.price)
       .reduce((a, b) => a + b);
   } return 'Add an event';
 };
 
-const createCostInfoTemplate = (events) => (
-  `<p class="trip-info__cost">
+const createCostInfoTemplate = (events) => `<p class="trip-info__cost">
   Total: &euro;&nbsp;<span class="trip-info__cost-value">${calculateCostInfo(events)}</span>
-</p>`
-);
+</p>`;
 
 export default class CostInfo extends AbstractView {
-  constructor(event) {
+  constructor(eventsModel) {
     super();
-    this._event = event;
+    this._events = eventsModel;
   }
 
   getTemplate() {
-    return createCostInfoTemplate(this._event);
+    return createCostInfoTemplate(this._events);
   }
 }

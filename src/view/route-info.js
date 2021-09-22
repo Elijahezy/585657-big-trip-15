@@ -7,23 +7,20 @@ const getRouteDestinationList = (events) => {
 };
 
 const createRouteInfoTemplate = (events) =>
-  `<section class="trip-main__trip-info  trip-info">
-
-      <div class="trip-info__main">
+  `<div class="trip-info__main">
         <h1 class="trip-info__title">${getRouteDestinationList(events).join('&nbsp;&mdash;&nbsp;')}</h1>
 
         <p class="trip-info__dates">Mar 18&nbsp;&mdash;&nbsp;20</p>
-      </div>
-
-    </section>`;
+      </div>`;
 
 export default class RouteInfo extends AbstractView {
-  constructor(event) {
+  constructor(eventsModel) {
     super();
-    this._event = event;
+    this._events = eventsModel;
   }
 
   getTemplate() {
-    return createRouteInfoTemplate(this._event);
+
+    return createRouteInfoTemplate(this._events);
   }
 }

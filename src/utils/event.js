@@ -8,8 +8,8 @@ export const humanizeEventHoursDate = (dueDate) => dayjs(dueDate).format('HH:mm'
 export const isEventExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
 
 export const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
-export const sortByDay = (eventA, eventB) => eventA.day - eventB.day;
-export const sortByTime = (pointA, pointB) => (pointB.end - pointB.start) - (pointA.end - pointA.start);
+export const sortByDay = (eventA, eventB) => eventA.start - eventB.start;
+export const sortByTime = (pointA, pointB) => (dayjs(pointB.end).diff(dayjs(pointB.start), 'millisecond')) -  (dayjs(pointA.end).diff(dayjs(pointA.start), 'millisecond'));
 
 export const getDuration = (from, to) => {
   let duration = dayjs(to).diff(dayjs(from), 'millisecond');

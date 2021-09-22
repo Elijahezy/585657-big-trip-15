@@ -1,8 +1,7 @@
 import { humanizeEventHoursDate } from '../utils/event.js';
-import { createEventTypeList, createOfferList } from '../mock/event-edit-data.js';
+import { POINTS } from '../consts.js';
+// import { createEventTypeList } from '../mock/event-edit-data.js';
 import SmartView from './smart.js';
-import { DESTINATIONS, getOffer } from '../mock/data.js';
-import { OFFER_LIST } from '../consts.js';
 import '../../node_modules/flatpickr/dist/flatpickr.min.css';
 import flatpickr from 'flatpickr';
 import dayjs from 'dayjs';
@@ -10,15 +9,22 @@ import dayjs from 'dayjs';
 const BLANK_EVENT = {
   type: 'taxi',
   destination: '',
-  offer: getOffer('Taxi'),
-  price: '',
+  offers: [{title: 'Upgrade to a business class', price: 190},
+    {title: 'Choose the radio station', price: 30},
+    {title: 'Choose temperature', price: 170},
+    {title: 'Drive quickly, I\'m in a hurry', price: 100},
+    {title: 'Drive slowly', price: 110}],
+  price: '600',
   start: dayjs().toDate(),
   end: dayjs().toDate(),
-  day: '',
   isFavorite: false,
 };
 
-const createDestinationPhotos = (destination) => destination.photos.map((item) => `<img class="event__photo" src="${item}" alt="Event photo"></img>`);
+const isChecked = (type, currentType) => type === currentType ? 'checked' : '';
+
+const isCheckedOffers = (offer, checkedOffers) => checkedOffers.find((checkedOffer) => checkedOffer.title === offer.title) ? 'checked' : '';
+
+const createDestinationPhotos = (destination) => destination.pictures.map((picture) => `<img class="event__photo" src="${picture.src}" alt="${picture.description}"></img>`);
 
 const createDestinationPhotosContainer = (destination) =>
   `<div class="event__photos-container">
@@ -28,21 +34,45 @@ const createDestinationPhotosContainer = (destination) =>
   </div>`;
 
 
-const createSingleDestinationOption = (typesOfDestinations) => {
-  const options = Object.values(typesOfDestinations);
-  return options.map((destination) => `<option value="${destination.name}"></option>`).join(' ');
-};
+const createSingleDestinationOption = (typesOfDestinations) => typesOfDestinations.map((destination) => `<option value="${destination.name}"></option>`).join(' ');
+
 const createDestinationOptions = (typesOfDestinations) =>
   `<datalist id="destination-list-1">
     ${createSingleDestinationOption(typesOfDestinations)}
   </datalist>`;
 
-const createEditModuleTemplate = (data = {}) => {
-  const {type, start, end, price, offer, destination } = data;
+const createEventOffer = (offer, checkedOffers) => (
+  `<div class="event__offer-selector">
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.toLowerCase()}-1" type="checkbox" name="event-offer-${offer.title.toLowerCase()}" ${isCheckedOffers(offer, checkedOffers)}>
+  <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase()}-1">
+    <span class="event__offer-title">${offer.title}</span>
+    &plus;&euro;&nbsp;
+    <span class="event__offer-price">${offer.price}</span>
+  </label>
+  </div>`
+);
+
+const createOfferList = (type, allAvailableOffersOfType, checkedOffers) => {
+  const requiredOffer = allAvailableOffersOfType.find((offer) => type === offer.type);
+  return requiredOffer.offers.map((offer) => createEventOffer(offer, checkedOffers));
+};
+
+const createEventType = (type, currentType) => (
+  `<div class="event__type-item">
+  <input id="event-type-${type.toLowerCase()}-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="${type.toLowerCase()}" ${isChecked(type.toLowerCase(), currentType.toLowerCase())} data-event-type="${type}">
+  <label class="event__type-label  event__type-label--${type.toLowerCase()}" for="event-type-${type.toLowerCase()}-1">${type}</label>
+  </div>`
+);
+
+const createEventTypeList = (currentType) => POINTS.map((point) => createEventType(point, currentType));
+
+const createEditModuleTemplate = (data, availableDestinations, availableOffers) => {
+  const {type, start, end, price, offers, destination } = data;
 
   const startHour = humanizeEventHoursDate(start);
 
   const endHour = humanizeEventHoursDate(end);
+
 
   return `<form class="event event--edit" action="#" method="post">
 <header class="event__header">
@@ -66,7 +96,7 @@ const createEditModuleTemplate = (data = {}) => {
       ${type}
     </label>
     <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" onkeyup="this.value = this.value.replace(/[^]/g,'');" value="${destination ? destination.name : ''}" list="destination-list-1">
-    ${createDestinationOptions(DESTINATIONS)}
+    ${createDestinationOptions(availableDestinations)}
   </div>
 
   <div class="event__field-group  event__field-group--time">
@@ -96,7 +126,7 @@ const createEditModuleTemplate = (data = {}) => {
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${createOfferList(offer)}
+      ${createOfferList(type, availableOffers, offers)}
     </div>
   </section>
 
@@ -112,11 +142,14 @@ const createEditModuleTemplate = (data = {}) => {
 
 
 export default class EventEdit extends SmartView {
-  constructor(event = BLANK_EVENT) {
+  constructor(destinations, offers, event = BLANK_EVENT) {
     super();
     this._data = EventEdit.parseEventToData(event);
     this._startDayPicker = null;
     this._endDayPicker = null;
+    this._destinations = destinations;
+    this._offers = offers;
+    this._addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
     this._changeEventType = this._changeEventType.bind(this);
@@ -134,7 +167,7 @@ export default class EventEdit extends SmartView {
   }
 
   getTemplate() {
-    return createEditModuleTemplate(this._data);
+    return createEditModuleTemplate(this._data, this._destinations, this._offers);
   }
 
   restoreHandlers() {
@@ -169,6 +202,7 @@ export default class EventEdit extends SmartView {
 
   _formDeleteClickHandler(evt) {
     evt.preventDefault();
+    this._addNewEventButton.disabled = false;
     this._callback.deleteClick(EventEdit.parseDataToEvent(this._data));
   }
 
@@ -228,14 +262,12 @@ export default class EventEdit extends SmartView {
   }
 
   _getNewDestination(requiredPoint) {
-    const destinationTypes = Object.values(DESTINATIONS);
-    const requiredDestination = destinationTypes.find((point) => point.name === requiredPoint);
+    const requiredDestination = this._destinations.find((point) => point.name === requiredPoint);
     return requiredDestination;
   }
 
   _getNewOffer(offerName) {
-    const offerTypes = Object.values(OFFER_LIST);
-    const requiredOffer = offerTypes.find((offer) => offer.type === offerName);
+    const requiredOffer = this._offers.find((offer) => offer.type === offerName);
     return requiredOffer;
   }
 
@@ -255,7 +287,15 @@ export default class EventEdit extends SmartView {
   }
 
   static parseEventToData(event) {
-    return {...event};
+    return Object.assign(
+      {},
+      event,
+      {
+        start: event.start,
+        end: event.end,
+        isFavorite: !event.isFavorite,
+      },
+    );
   }
 
   static parseDataToEvent(data) {

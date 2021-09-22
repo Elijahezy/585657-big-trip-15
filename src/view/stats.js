@@ -84,7 +84,6 @@ export default class Stats extends SmartView {
   removeElement() {
     super.removeElement();
 
-
     this._moneyChart = null;
     this._typeChart = null;
     this._timeChart = null;

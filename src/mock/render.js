@@ -1,53 +1,44 @@
-import RouteInfoView from '../view/route-info.js';
 import SiteMenuView from '../view/menu.js';
-import CostInfoView from '../view/cost-info.js';
 import StatsView from '../view/stats.js';
-import { generateRoutePoints } from './data.js';
-import { MenuItem } from '../consts.js';
 import FilterPresenter from '../presenter/filter.js';
 import RoutePresenter from '../presenter/route.js';
 import EventsModel from '../model/events-model.js';
 import FilterModel from '../model/filter-model.js';
-import dayjs from 'dayjs';
+import Api from '../api.js';
 
 import { render, RenderPosition, remove } from '../utils/render.js';
-import { UpdateType, FilterType } from '../consts.js';
+import { UpdateType, FilterType, MenuItem } from '../consts.js';
 
-const DEFAULT_EVENTS = 18;
+const AUTHORIZATION = 'Basic 5555555-big-trip-15';
+const SERVER = 'https://15.ecmascript.pages.academy/big-trip';
 
-const events = new Array(DEFAULT_EVENTS).fill().map(generateRoutePoints);
+const api = new Api(SERVER, AUTHORIZATION);
 
-events.sort((a, b) => {
-  if (dayjs(a.day).format('DD') > dayjs(b.day).format('DD')) {
-    return a.day - b.day;
-  }
-  if (dayjs(a.day).format('DD') < dayjs(b.day).format('DD')) {
-    return a.day - b.day;
-  }
-  return 0;
-});
-
-const containerRouteAndCost = document.querySelector('.trip-main');
+const containerRoute = document.querySelector('.trip-main');
 const containerTripNav = document.querySelector('.trip-controls__navigation');
-
-render(containerRouteAndCost, new RouteInfoView(events), RenderPosition.AFTERBEGIN);
-
-const routeAndCostContainer = document.querySelector('.trip-main__trip-info');
+const containerCost = document.querySelector('.trip-main__trip-info');
+const routeContainer = document.querySelector('.page-body__page-main > .page-body__container');
+const addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
 const siteMenuComponent = new SiteMenuView();
 
-
-render(routeAndCostContainer, new CostInfoView(events), RenderPosition.BEFOREEND);
 render(containerTripNav, siteMenuComponent, RenderPosition.BEFOREEND);
 
 const eventsModel = new EventsModel();
-eventsModel.setEvents(events);
-
 const filterModel = new FilterModel();
 
-const routeContainer = document.querySelector('.page-body__page-main > .page-body__container');
+Promise.all([
+  api.getDestinations(),
+  api.getOffers(),
+  api.getEvents(),
+])
+  .then(([destinations, offers, points]) => {
+    eventsModel.setDestinations(destinations);
+    eventsModel.setOffers(offers);
+    eventsModel.setEvents(UpdateType.INIT, points.map((point) => eventsModel.adaptToClient(point)));
+  });
 
-const routePresenter = new RoutePresenter(routeContainer, eventsModel, filterModel);
+const routePresenter = new RoutePresenter(routeContainer, eventsModel, filterModel, containerRoute, containerCost, api);
 const filterPresenter = new FilterPresenter(containerTripNav, filterModel, eventsModel);
 
 filterPresenter.init();
@@ -69,20 +60,21 @@ const handleSiteMenuClick = (menuItem) => {
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       statisticsComponent = new StatsView(eventsModel.getEvents());
       render(routeContainer, statisticsComponent, RenderPosition.BEFOREEND);
+      routePresenter.renderRouteInfo();
+      routePresenter.renderCostInfo();
       break;
   }
 };
 
 siteMenuComponent.setMenuClickHandler(handleSiteMenuClick);
 
-document.querySelector('.trip-main__event-add-btn').addEventListener('click', (evt) => {
+addNewEventButton.addEventListener('click', (evt) => {
   evt.preventDefault();
   remove(statisticsComponent);
   routePresenter.destroy();
   filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
   routePresenter.init();
-  routePresenter.createEvent();
-  siteMenuComponent.getElement().querySelector('.trip-main__event-add-btn').disabled = true;
+  routePresenter.createEvent(eventsModel);
 });
 
-export { events };
+

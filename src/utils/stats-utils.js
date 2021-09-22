@@ -13,8 +13,9 @@ const filterEmptyEvents = (events) => events.filter((event) => event.length);
 
 const compareEventsWithPoints = (events, point) => {
   const filteredArrays = [];
+
   events.forEach((array) => array.filter((event) => {
-    event.type === point ? filteredArrays.push(event) : false;
+    event.type === point.toLowerCase() ? filteredArrays.push(event) : false;
   }));
 
   return filteredArrays;
@@ -23,8 +24,10 @@ const compareEventsWithPoints = (events, point) => {
 export const countEventsPrice = (events, points) => {
   const existingEvents = filterEmptyEvents(events);
 
+
   const finalPricesOfEvents = points.map((point) => {
     const comparedEventsWithPoints = compareEventsWithPoints(existingEvents, point);
+
     return comparedEventsWithPoints.reduce((sum, event) => sum + event.price, 0);
   });
 
@@ -89,7 +92,7 @@ export const humanizeDurationOfEvents = (duration) => {
 };
 
 export const countEventsInDateRange = (dates, events) => dates.map((date) =>
-  events.filter((event) => isDatesEqual(event.day, date)));
+  events.filter((event) => isDatesEqual(event.start, date)));
 
 
 export const getDatesInRange = (dateFrom, dateTo) => {

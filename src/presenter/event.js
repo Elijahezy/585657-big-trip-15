@@ -9,10 +9,13 @@ const Mode = {
 };
 
 export default class Event {
-  constructor(eventListContainer, changeData, changeMode) {
+  constructor(eventListContainer, eventsModel , changeData, changeMode) {
     this._eventListContainer = eventListContainer;
     this._changeData = changeData;
     this._changeMode = changeMode;
+    this._destinations = eventsModel.getDestinations();
+    this._offers = eventsModel.getOffers();
+    this._addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
     this._eventComponent = null;
     this._eventEditComponent = null;
@@ -32,7 +35,7 @@ export default class Event {
     const prevEventEditComponent = this._eventEditComponent;
 
     this._eventComponent = new EventView(event);
-    this._eventEditComponent = new EventEditView(event);
+    this._eventEditComponent = new EventEditView(this._destinations, this._offers, event);
 
     this._eventComponent.setEditClickHandler(this._handleEditClick);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
@@ -91,6 +94,7 @@ export default class Event {
   _escKeyDownHandler(evt) {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
+      this._addNewEventButton.disabled = false;
       this._eventEditComponent.reset(this._event);
       this._replaceFormToCard();
     }

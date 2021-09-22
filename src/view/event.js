@@ -9,21 +9,21 @@ const createOfferTemplate = (offerTitle, offerPrice) => (
   </li>`
 );
 
-const createOfferTemplateList = (eventOffers) => eventOffers.offers.map((offer) => createOfferTemplate(offer.title, offer.price));
+const createOfferTemplateList = (eventOffers) => eventOffers.map((offer) => createOfferTemplate(offer.title, offer.price));
 
 const createEventTemplate = (event) => {
 
-  const {type, start, end, price, offer, isFavorite, day, destination } = event;
+  const {type, start, end, price, offers, isFavorite, destination } = event;
 
   const startHour = humanizeEventHoursDate(start);
 
   const endHour = humanizeEventHoursDate(end);
 
-  const dueDate = humanizeEventDueDate(day);
+  const dueDate = humanizeEventDueDate(start);
 
   return `<li class="trip-events__item">
               <div class="event">
-                <time class="event__date" datetime="${day}">${dueDate}</time>
+                <time class="event__date" datetime="${start}">${dueDate}</time>
                 <div class="event__type">
                   <img class="event__type-icon" width="42" height="42" src="img/icons/${type}.png" alt="Event type icon">
                 </div>
@@ -41,7 +41,7 @@ const createEventTemplate = (event) => {
                 </p>
                 <h4 class="visually-hidden">Offers:</h4>
                 <ul class="event__selected-offers">
-                  ${createOfferTemplateList(offer).join('')}
+                  ${createOfferTemplateList(offers).join('')}
                 </ul>
                 <button class="event__favorite-btn event__favorite-btn--${isFavorite === true ? 'active' : null}" type="button">
                   <span class="visually-hidden">Add to favorite</span>
@@ -57,9 +57,10 @@ const createEventTemplate = (event) => {
 };
 
 export default class Event extends AbstractView {
-  constructor(event) {
+  constructor(event, eventsModel) {
     super();
     this._event = event;
+    this._eventsModel = eventsModel;
 
     this._editClickHandler = this._editClickHandler.bind(this);
     this._favoriteClickHandler = this._favoriteClickHandler.bind(this);

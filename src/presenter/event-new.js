@@ -1,5 +1,4 @@
 import EventEditView from '../view/event-edit.js';
-import {nanoid} from 'nanoid';
 import {remove, render, RenderPosition} from '../utils/render.js';
 import {UserAction, UpdateType} from '../consts.js';
 
@@ -14,20 +13,23 @@ export default class EventNew {
     this._handleFormSubmit = this._handleFormSubmit.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+
+    this._addNewEventButton = document.querySelector('.trip-main__event-add-btn');
   }
 
-  init() {
+  init(destinations, offers) {
     if (this._eventEditComponent !== null) {
       return;
     }
 
-    this._eventEditComponent = new EventEditView();
+    this._eventEditComponent = new EventEditView(destinations, offers);
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
 
     render(this._eventListContainer, this._eventEditComponent, RenderPosition.AFTERBEGIN);
 
     document.addEventListener('keydown', this._escKeyDownHandler);
+    this._addNewEventButton.disabled = true;
   }
 
   destroy() {
@@ -45,7 +47,7 @@ export default class EventNew {
     this._changeData(
       UserAction.ADD_EVENT,
       UpdateType.MINOR,
-      Object.assign({id: nanoid()}, event),
+      event,
     );
     this.destroy();
   }
@@ -58,6 +60,7 @@ export default class EventNew {
     if (evt.key === 'Escape' || evt.key === 'Esc') {
       evt.preventDefault();
       this.destroy();
+      this._addNewEventButton.disabled = false;
     }
   }
 }
