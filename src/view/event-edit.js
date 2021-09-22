@@ -126,7 +126,7 @@ const createEditModuleTemplate = (data, availableDestinations, availableOffers) 
     <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
     <div class="event__available-offers">
-      ${createOfferList(type, availableOffers, offers)}
+      ${createOfferList(type, availableOffers, offers).join(' ')}
     </div>
   </section>
 
@@ -173,12 +173,13 @@ export default class EventEdit extends SmartView {
   restoreHandlers() {
     this._setInnerHandlers();
     this._setDatepicker();
+    this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
   }
 
   setFormSubmitHandler(callback) {
     this._callback.formSubmit = callback;
-    this.getElement().querySelector('.event__save-btn').addEventListener('submit', this._formSubmitHandler);
+    this.getElement().querySelector('.event__save-btn').addEventListener('click', this._formSubmitHandler);
   }
 
   removeElement() {
@@ -258,6 +259,7 @@ export default class EventEdit extends SmartView {
 
   _formSubmitHandler(evt) {
     evt.preventDefault();
+    this._addNewEventButton.disabled = false;
     this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
   }
 
@@ -299,7 +301,14 @@ export default class EventEdit extends SmartView {
   }
 
   static parseDataToEvent(data) {
-    return {...data};
+    return Object.assign(
+      {},
+      data,
+      {
+        isFavorite: false,
+        offers: data.offer,
+      },
+    );
   }
 }
 

@@ -1,4 +1,4 @@
-import EventsModel from './model/events-model';
+import EventsModel from '../src/model/events-model.js';
 
 const Method = {
   GET: 'GET',
@@ -25,24 +25,26 @@ export default class Api {
 
   getEvents() {
     return this._load({url: 'points'})
-      .then(Api.fromJSON);
+      .then(Api.fromJSON)
+      .then((points) => points.map(EventsModel.adaptToClient));
   }
 
   updateEvent(point) {
     return this._load({
       url: `points/${point.id}`,
       method: Method.PUT,
-      body: JSON.stringify(point),
+      body: JSON.stringify(EventsModel.adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
-      .then(Api.fromJSON);
+      .then(Api.fromJSON)
+      .then(EventsModel.adaptToClient);
   }
 
   addEvent(point) {
     return this._load({
       url: 'points',
       method: Method.POST,
-      body: JSON.stringify(point),
+      body: JSON.stringify(EventsModel.adaptToServer(point)),
       headers: new Headers({'Content-Type': 'application/json'}),
     })
       .then(Api.fromJSON)

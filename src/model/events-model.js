@@ -74,7 +74,7 @@ export default class Events extends AbstractObserver {
     this._notify(updateType);
   }
 
-  adaptToClient(event) {
+  static adaptToClient(event) {
     const adaptedTask = Object.assign(
       {},
       event,
@@ -94,7 +94,7 @@ export default class Events extends AbstractObserver {
     return adaptedTask;
   }
 
-  adaptToServer(event) {
+  static adaptToServer(event) {
     const adaptedTask = Object.assign(
       {},
       event,

@@ -35,7 +35,7 @@ Promise.all([
   .then(([destinations, offers, points]) => {
     eventsModel.setDestinations(destinations);
     eventsModel.setOffers(offers);
-    eventsModel.setEvents(UpdateType.INIT, points.map((point) => eventsModel.adaptToClient(point)));
+    eventsModel.setEvents(UpdateType.INIT, points);
   });
 
 const routePresenter = new RoutePresenter(routeContainer, eventsModel, filterModel, containerRoute, containerCost, api);

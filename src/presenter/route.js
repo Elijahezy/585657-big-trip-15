@@ -220,8 +220,6 @@ export default class Route {
     this.renderRouteInfo();
     this.renderCostInfo();
     this._renderSort();
-
-
     this._renderEventsList();
   }
 }
