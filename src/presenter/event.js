@@ -26,6 +26,7 @@ export default class Event {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._handleFavoriteClick = this._handleFavoriteClick.bind(this);
     this._handleDeleteClick = this._handleDeleteClick.bind(this);
+    this._handleCloseClick = this._handleCloseClick.bind(this);
   }
 
   init(event) {
@@ -41,6 +42,7 @@ export default class Event {
     this._eventEditComponent.setFormSubmitHandler(this._handleFormSubmit);
     this._eventComponent.setFavoriteClickHandler(this._handleFavoriteClick);
     this._eventEditComponent.setDeleteClickHandler(this._handleDeleteClick);
+    this._eventEditComponent.setCloseButtonClickHandler(this._handleCloseClick);
 
     if (prevEventComponent === null || prevEventEditComponent === null) {
       render(this._eventListContainer, this._eventComponent, RenderPosition.BEFOREEND);
@@ -68,6 +70,10 @@ export default class Event {
   destroy() {
     remove(this._eventComponent);
     remove(this._eventEditComponent);
+  }
+
+  _handleCloseClick() {
+    this._replaceFormToCard();
   }
 
   _handleDeleteClick(event) {

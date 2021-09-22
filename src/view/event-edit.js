@@ -14,7 +14,7 @@ const BLANK_EVENT = {
     {title: 'Choose temperature', price: 170},
     {title: 'Drive quickly, I\'m in a hurry', price: 100},
     {title: 'Drive slowly', price: 110}],
-  price: '600',
+  price: 600,
   start: dayjs().toDate(),
   end: dayjs().toDate(),
   isFavorite: false,
@@ -157,6 +157,7 @@ export default class EventEdit extends SmartView {
     this._startDateChangeHandler = this._startDateChangeHandler.bind(this);
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
+    this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepicker();
@@ -175,6 +176,7 @@ export default class EventEdit extends SmartView {
     this._setDatepicker();
     this.setFormSubmitHandler(this._callback.formSubmit);
     this.setDeleteClickHandler(this._callback.deleteClick);
+    this.setCloseButtonClickHandler(this._callback.closeEditForm);
   }
 
   setFormSubmitHandler(callback) {
@@ -196,9 +198,19 @@ export default class EventEdit extends SmartView {
     }
   }
 
+  setCloseButtonClickHandler(callback) {
+    this._callback.closeEditForm = callback;
+    this.getElement().querySelector('.event__rollup-btn').addEventListener('click', this._formCloseClickHandler);
+  }
+
   setDeleteClickHandler(callback) {
     this._callback.deleteClick = callback;
     this.getElement().querySelector('.event__reset-btn').addEventListener('click', this._formDeleteClickHandler);
+  }
+
+  _formCloseClickHandler(evt) {
+    evt.preventDefault();
+    this._callback.closeEditForm();
   }
 
   _formDeleteClickHandler(evt) {
@@ -260,6 +272,9 @@ export default class EventEdit extends SmartView {
   _formSubmitHandler(evt) {
     evt.preventDefault();
     this._addNewEventButton.disabled = false;
+    this.updateData({
+      price: +this.getElement().querySelector('.event__input--price').value,
+    });
     this._callback.formSubmit(EventEdit.parseDataToEvent(this._data));
   }
 
@@ -284,7 +299,6 @@ export default class EventEdit extends SmartView {
     evt.preventDefault();
     this.updateData({
       type: evt.target.dataset.eventType.toLowerCase(),
-      offer: this._getNewOffer(evt.target.dataset.eventType),
     });
   }
 
@@ -306,7 +320,6 @@ export default class EventEdit extends SmartView {
       data,
       {
         isFavorite: false,
-        offers: data.offer,
       },
     );
   }
