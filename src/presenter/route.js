@@ -7,7 +7,7 @@ import CostInfoView from '../view/cost-info.js';
 import LoadingView from '../view/loading.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
 import { filter } from '../utils/filter.js';
-import EventPresenter from './event.js';
+import EventPresenter, {State as EventPresenterViewState} from './event.js';
 import EventNewPresenter from './event-new.js';
 import { sortByDay, sortByPrice, sortByTime } from '../utils/event.js';
 import { FilterType, SortType, UpdateType, UserAction } from '../consts.js';
@@ -114,21 +114,33 @@ export default class Route {
   _handleViewAction(actionType, updateType, update) {
     switch (actionType) {
       case UserAction.UPDATE_EVENT:
+        this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.SAVING);
         this._api.updateEvent(update)
           .then((response) => {
             this._eventsModel.updateEvent(updateType, response);
+          })
+          .catch(() => {
+            this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.ABORTING);
           });
         break;
       case UserAction.ADD_EVENT:
+        this._eventNewPresenter.setSaving();
         this._api.addEvent(update)
           .then((response) => {
             this._eventsModel.addEvent(updateType, response);
+          })
+          .catch(() => {
+            this._eventNewPresenter.setAborting();
           });
         break;
       case UserAction.DELETE_EVENT:
+        this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.DELETING);
         this._api.deleteEvent(update)
           .then(() => {
             this._eventsModel.deleteEvent(updateType, update);
+          })
+          .catch(() => {
+            this._eventPresenter.get(update.id).setViewState(EventPresenterViewState.ABORTING);
           });
         break;
     }

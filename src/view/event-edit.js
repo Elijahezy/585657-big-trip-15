@@ -67,7 +67,7 @@ const createEventType = (type, currentType) => (
 const createEventTypeList = (currentType) => POINTS.map((point) => createEventType(point, currentType));
 
 const createEditModuleTemplate = (data, availableDestinations, availableOffers) => {
-  const {type, start, end, price, offers, destination } = data;
+  const {type, start, end, price, offers, destination, isDisabled, isSaving, isDeleting } = data;
 
   const startHour = humanizeEventHoursDate(start);
 
@@ -84,7 +84,7 @@ const createEditModuleTemplate = (data, availableDestinations, availableOffers) 
     <input class="event__type-toggle  visually-hidden" id="event-type-toggle-1" type="checkbox">
 
     <div class="event__type-list">
-      <fieldset class="event__type-group">
+      <fieldset class="event__type-group" ${isDisabled ? 'disabled' : ''}>
         <legend class="visually-hidden">Event type</legend>
         ${createEventTypeList(type).join('')}
       </fieldset>
@@ -95,7 +95,7 @@ const createEditModuleTemplate = (data, availableDestinations, availableOffers) 
     <label class="event__label  event__type-output" for="event-destination-1">
       ${type}
     </label>
-    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" onkeyup="this.value = this.value.replace(/[^]/g,'');" value="${destination ? destination.name : ''}" list="destination-list-1">
+    <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" onkeyup="this.value = this.value.replace(/[^]/g,'');" value="${destination ? destination.name : ''}" list="destination-list-1" ${isDisabled ? 'disabled' : ''}>
     ${createDestinationOptions(availableDestinations)}
   </div>
 
@@ -115,8 +115,8 @@ const createEditModuleTemplate = (data, availableDestinations, availableOffers) 
     <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" onkeyup="this.value = this.value.replace(/[^0-9]/g,'');" value="${price}">
   </div>
 
-  <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-  <button class="event__reset-btn" type="reset">Delete</button>
+  <button class="event__save-btn  btn  btn--blue" type="submit">${isSaving ? 'Saving...' : 'Save'}</button>
+  <button class="event__reset-btn" type="reset">${isDeleting ? 'Deleting...' : 'Delete'}</button>
   <button class="event__rollup-btn" type="button">
     <span class="visually-hidden">Open event</span>
   </button>
@@ -310,18 +310,27 @@ export default class EventEdit extends SmartView {
         start: event.start,
         end: event.end,
         isFavorite: !event.isFavorite,
+        isDisabled: false,
+        isSaving: false,
+        isDeleting: false,
       },
     );
   }
 
   static parseDataToEvent(data) {
-    return Object.assign(
+    data = Object.assign(
       {},
       data,
       {
         isFavorite: false,
       },
     );
+
+    delete data.isDisabled;
+    delete data.isSaving;
+    delete data.isDeleting;
+
+    return data;
   }
 }
 
