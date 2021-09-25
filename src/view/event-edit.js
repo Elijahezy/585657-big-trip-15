@@ -43,7 +43,7 @@ const createDestinationOptions = (typesOfDestinations) =>
 
 const createEventOffer = (offer, checkedOffers) => (
   `<div class="event__offer-selector">
-  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.toLowerCase()}-1" type="checkbox" name="event-offer-${offer.title.toLowerCase()}" ${isCheckedOffers(offer, checkedOffers)}>
+  <input class="event__offer-checkbox  visually-hidden" id="event-offer-${offer.title.toLowerCase()}-1" type="checkbox" name="event-offer-${offer.title.toLowerCase()}" data-offer-title="${offer.title}" ${isCheckedOffers(offer, checkedOffers)}>
   <label class="event__offer-label" for="event-offer-${offer.title.toLowerCase()}-1">
     <span class="event__offer-title">${offer.title}</span>
     &plus;&euro;&nbsp;
@@ -149,6 +149,7 @@ export default class EventEdit extends SmartView {
     this._endDayPicker = null;
     this._destinations = destinations;
     this._offers = offers;
+
     this._addNewEventButton = document.querySelector('.trip-main__event-add-btn');
 
     this._formSubmitHandler = this._formSubmitHandler.bind(this);
@@ -158,6 +159,7 @@ export default class EventEdit extends SmartView {
     this._endDateChangeHandler = this._endDateChangeHandler.bind(this);
     this._formDeleteClickHandler = this._formDeleteClickHandler.bind(this);
     this._formCloseClickHandler = this._formCloseClickHandler.bind(this);
+    this._offerChangeHandler = this._offerChangeHandler.bind(this);
 
     this._setInnerHandlers();
     this._setDatepicker();
@@ -252,6 +254,24 @@ export default class EventEdit extends SmartView {
   _setInnerHandlers() {
     this.getElement().querySelector('.event__input--destination').addEventListener('change', this._changeDestinationType);
     this.getElement().querySelectorAll('.event__type-input').forEach((item) => item.addEventListener('change', this._changeEventType));
+    this.getElement().querySelector('.event__available-offers').addEventListener('change', this._offerChangeHandler);
+  }
+
+  _offerChangeHandler(evt) {
+    evt.preventDefault();
+    let newOffers = this._data.offers;
+    this._offers.find((offer) => offer.offers.find((item) => {
+      if(item.title === evt.target.dataset.offerTitle) {
+        if (evt.target.checked) {
+          return newOffers.push(item);
+        }
+        return newOffers = newOffers.filter((itemsToKeep) => itemsToKeep.title !== item.title);
+      }
+    }));
+    this.updateData({
+      offers: newOffers,
+    });
+
   }
 
   _startDateChangeHandler([userDate]) {
@@ -299,6 +319,7 @@ export default class EventEdit extends SmartView {
     evt.preventDefault();
     this.updateData({
       type: evt.target.dataset.eventType.toLowerCase(),
+      offers: [],
     });
   }
 
@@ -307,9 +328,6 @@ export default class EventEdit extends SmartView {
       {},
       event,
       {
-        start: event.start,
-        end: event.end,
-        isFavorite: !event.isFavorite,
         isDisabled: false,
         isSaving: false,
         isDeleting: false,

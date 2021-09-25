@@ -1,6 +1,6 @@
 import AbstractObserver from '../utils/abstract-observer.js';
 
-export default class Events extends AbstractObserver {
+export default class EventsModel extends AbstractObserver {
   constructor() {
     super();
     this._events = [];

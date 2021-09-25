@@ -80,7 +80,7 @@ export default class Event {
     }
 
     const resetFormState = () => {
-      this._taskEditComponent.updateData({
+      this._eventEditComponent.updateData({
         isDisabled: false,
         isSaving: false,
         isDeleting: false,
@@ -147,17 +147,12 @@ export default class Event {
   }
 
   _handleFavoriteClick() {
-    this._changeData(
-      UserAction.UPDATE_EVENT,
-      UpdateType.MINOR,
-      Object.assign(
-        {},
-        this._event,
-        {
-          isFavorite: !this._event.isFavorite,
-        },
-      ),
-    );
+    const update = {
+      ...this._event,
+      isFavorite: !this._event.isFavorite,
+    };
+
+    this._changeData(UserAction.UPDATE_EVENT, UpdateType.PATCH, update);
   }
 
   _handleEditClick() {
@@ -167,7 +162,7 @@ export default class Event {
   _handleFormSubmit(event) {
     this._changeData(
       UserAction.UPDATE_EVENT,
-      UpdateType.MINOR,
+      UpdateType.PATCH,
       event,
     );
   }

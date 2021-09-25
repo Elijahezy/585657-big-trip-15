@@ -3,7 +3,7 @@ import { MenuItem } from '../consts';
 
 const createSiteMenuTemplate = () =>
   (`<nav class="trip-controls__trip-tabs  trip-tabs">
-<a class="trip-tabs__btn  trip-tabs__btn--active" href="#" data-menu-type="${MenuItem.TABLE}">Table</a>
+<a class="trip-tabs__btn" href="#" data-menu-type="${MenuItem.TABLE}">Table</a>
 <a class="trip-tabs__btn" href="#" data-menu-type="${MenuItem.STATS}">Stats</a>
 </nav>`);
 
@@ -32,7 +32,15 @@ export default class SiteMenu extends AbstractView {
     const item = this.getElement().querySelector(`[data-menu-type="${menuItem}"]`);
 
     if (item !== null) {
-      item.checked = true;
+      item.classList.add('trip-tabs__btn--active');
+    }
+  }
+
+  resetMenuItem(menuItem) {
+    const item = this.getElement().querySelector(`[data-menu-type="${menuItem}"]`);
+
+    if (item !== null) {
+      item.classList.remove('trip-tabs__btn--active');
     }
   }
 }

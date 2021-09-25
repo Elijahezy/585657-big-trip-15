@@ -5,7 +5,7 @@ export const humanizeEventDueDate = (dueDate) => dayjs(dueDate).format('D MMM');
 
 export const humanizeEventHoursDate = (dueDate) => dayjs(dueDate).format('HH:mm');
 
-export const isEventExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'D');
+export const isEventExpired = (dueDate) => dueDate === null ? false : dayjs().isAfter(dueDate, 'day');
 
 export const sortByPrice = (pointA, pointB) => pointB.price - pointA.price;
 export const sortByDay = (eventA, eventB) => eventA.start - eventB.start;

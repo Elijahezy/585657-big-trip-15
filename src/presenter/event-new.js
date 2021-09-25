@@ -65,7 +65,7 @@ export default class EventNew {
   _handleFormSubmit(event) {
     this._changeData(
       UserAction.ADD_EVENT,
-      UpdateType.MINOR,
+      UpdateType.MAJOR,
       event,
     );
   }

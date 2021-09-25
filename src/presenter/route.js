@@ -152,7 +152,7 @@ export default class Route {
         this._eventPresenter.get(data.id).init(data);
         break;
       case UpdateType.MINOR:
-        this._clearBoard();
+        this._clearBoard({resetSortType: true});
         this._renderBoard();
         break;
       case UpdateType.MAJOR:

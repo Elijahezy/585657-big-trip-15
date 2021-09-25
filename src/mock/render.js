@@ -9,7 +9,7 @@ import Api from '../api.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
 import { UpdateType, FilterType, MenuItem } from '../consts.js';
 
-const AUTHORIZATION = 'Basic 5555555-big-trip-15';
+const AUTHORIZATION = 'Basic 5555544-big-trip-15';
 const SERVER = 'https://15.ecmascript.pages.academy/big-trip';
 
 const api = new Api(SERVER, AUTHORIZATION);
@@ -53,6 +53,8 @@ const handleSiteMenuClick = (menuItem) => {
       filterModel.setFilter(UpdateType.MAJOR, FilterType.EVERYTHING);
       routePresenter.init();
       remove(statisticsComponent);
+      siteMenuComponent.resetMenuItem(MenuItem.STATS);
+      siteMenuComponent.setMenuItem(menuItem);
       break;
     case MenuItem.STATS:
       routePresenter.destroy();
@@ -62,6 +64,8 @@ const handleSiteMenuClick = (menuItem) => {
       render(routeContainer, statisticsComponent, RenderPosition.BEFOREEND);
       routePresenter.renderRouteInfo();
       routePresenter.renderCostInfo();
+      siteMenuComponent.resetMenuItem(MenuItem.TABLE);
+      siteMenuComponent.setMenuItem(menuItem);
       break;
   }
 };
